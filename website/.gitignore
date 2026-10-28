@@ -1,0 +1,3 @@
+dist/
+release*.tar.gz
+qa/

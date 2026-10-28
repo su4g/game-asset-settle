@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f7f9fd">
+  <meta name="description" content="饰品交易账本，面向 BUFF、悠悠有品与 Steam 的个人饰品交易记录工具。在 macOS 归档交易，在 iPhone 随时查阅，让成本、持仓与已实现收益一目了然。">
+  <meta property="og:type" content="website">
+  <meta property="og:locale" content="zh_CN">
+  <meta property="og:title" content="饰品交易账本 · 每一笔交易，心中有数">
+  <meta property="og:description" content="BUFF、悠悠、Steam，三平台交易，一本清楚的账。macOS 本机归档，iOS 随身查阅。">
+  <meta property="og:url" content="https://www.suag.top/">
+  <meta property="og:image" content="https://www.suag.top/site-assets/app-icon.png">
+  <link rel="canonical" href="https://www.suag.top/">
+  <link rel="icon" href="/site-assets/app-icon.png" type="image/png">
+  <link rel="apple-touch-icon" href="/site-assets/app-icon.png">
+  <link rel="stylesheet" href="/site-assets/styles.css">
+  <script src="/site-assets/app.js" defer></script>
+  <title>饰品交易账本 · 每一笔交易，心中有数</title>
+</head>
+<body>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><defs>
+    <symbol id="icon-arrow" viewBox="0 0 24 24"><path d="M5 12h14m-6-6 6 6-6 6"/></symbol>
+    <symbol id="icon-external" viewBox="0 0 24 24"><path d="M7 17 17 7M7 7h10v10"/></symbol>
+    <symbol id="icon-github" viewBox="0 0 24 24"><path d="M9 19c-4.3 1.3-4.3-2.1-6-2.6m12 5v-3.8c0-1.1.1-1.6-.5-2.2 3.1-.3 6.5-1.5 6.5-7A5.5 5.5 0 0 0 19.5 4a5.1 5.1 0 0 0-.1-3S18.2.6 15.3 2a15 15 0 0 0-7.6 0C4.8.6 3.6 1 3.6 1a5.1 5.1 0 0 0-.1 3A5.5 5.5 0 0 0 2 8.4c0 5.5 3.4 6.7 6.5 7-.6.6-.6 1.2-.5 2.2v3.8" transform="translate(1 1) scale(.9)"/></symbol>
+    <symbol id="icon-chart" viewBox="0 0 24 24"><path d="M4 4v16h16M8 15l4-5 4 2 4-7"/></symbol>
+    <symbol id="icon-layers" viewBox="0 0 24 24"><path d="m3 7 9-5 9 5-9 5-9-5Zm0 5 9 5 9-5M3 17l9 5 9-5"/></symbol>
+    <symbol id="icon-shield" viewBox="0 0 24 24"><path d="M12 3 4 6v6c0 5 8 9 8 9s8-4 8-9V6l-8-3Z"/><path d="m8 12 3 3 5-6"/></symbol>
+    <symbol id="icon-desktop" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8m-4-4v4"/></symbol>
+    <symbol id="icon-phone" viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="3"/><path d="M10 5h4m-3 14h2"/></symbol>
+    <symbol id="icon-image" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8" cy="8" r="1.5"/><path d="m21 16-5-5-7 8-3-3-3 3"/></symbol>
+    <symbol id="icon-check" viewBox="0 0 24 24"><path d="m5 12 4 4L19 6"/></symbol>
+    <symbol id="icon-book" viewBox="0 0 24 24"><path d="M5 3h14v18H6a3 3 0 0 1 0-6h13M5 3v12m4-8h6m-6 4h4"/></symbol>
+  </defs></svg>
+  <a class="skip-link" href="#main">跳至主要内容</a>
+  <header class="site-header">
+    <div class="container nav-row">
+      <a class="brand" href="#" aria-label="饰品交易账本，回到首页"><img src="/site-assets/app-icon.png" alt="" width="40" height="40"><span>饰品交易账本<span class="brand-subtitle">GAME ASSET SETTLE</span></span></a>
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" aria-label="打开导航"><span></span><span></span></button>
+      <nav id="site-nav" aria-label="主导航">
+        <a href="#features">功能亮点</a><a href="#preview">双端体验</a><a href="#principles">数据与隐私</a>
+        <a class="nav-github" href="https://github.com/su4g/game-asset-settle" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" class="icon"><use href="#icon-github"/></svg>GitHub<svg aria-hidden="true" class="icon small"><use href="#icon-external"/></svg></a>
+      </nav>
+    </div>
+  </header>
+  <main id="main">
+    <section class="hero container" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <a class="project-status" href="#opensource"><span class="status-dot"></span>独立开发 · 开源筹备中<svg aria-hidden="true" class="icon small"><use href="#icon-arrow"/></svg></a>
+        <h1 id="hero-title">每一笔交易，<br><span>心中有数。</span></h1>
+        <p class="hero-description">散落在三个平台的饰品交易，<br class="desktop-break">终于有了一本清楚的账。</p>
+        <p class="hero-detail">汇总 BUFF、悠悠与 Steam 的个人交易记录，<br class="desktop-break">把成本、持仓和收益，整理成一目了然的日常。</p>
+        <div class="hero-actions"><a class="button primary" href="https://github.com/su4g/game-asset-settle" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" class="icon"><use href="#icon-github"/></svg>在 GitHub 关注项目<svg aria-hidden="true" class="icon small"><use href="#icon-external"/></svg></a><a class="button secondary" href="#preview">认识这本账<svg aria-hidden="true" class="icon small"><use href="#icon-arrow"/></svg></a></div>
+        <div class="availability"><span><svg aria-hidden="true" class="icon small"><use href="#icon-desktop"/></svg>macOS 桌面端</span><i></i><span><svg aria-hidden="true" class="icon small"><use href="#icon-phone"/></svg>iOS 随身端</span></div>
+      </div>
+      <div class="hero-art" aria-label="三平台交易汇入个人账本的概念示意">
+        <div class="art-grid"></div>
+        <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+        <span class="art-corner corner-top">你的交易，全局可见</span>
+        <div class="platform-float platform-buff"><img src="/site-assets/buff.png" alt="" width="30" height="30"><span>BUFF</span><span class="float-dot"></span></div>
+        <div class="platform-float platform-uu"><img src="/site-assets/uu.png" alt="" width="30" height="30"><span>悠悠有品</span><span class="float-dot"></span></div>
+        <div class="platform-float platform-steam"><img src="/site-assets/steam.png" alt="" width="30" height="30"><span>Steam</span><span class="float-dot"></span></div>
+        <div class="ledger-object"><div class="ledger-spine"></div><div class="ledger-cover"><div class="book-topline"><span>我的饰品账本</span><svg aria-hidden="true" class="icon"><use href="#icon-book"/></svg></div><div class="book-title">每一笔，<br>都有来处。</div><div class="book-rule"></div><div class="book-bottom"><span>交易 · 持仓 · 收益</span><span>01</span></div></div></div>
+        <div class="art-note"><span class="note-check"><svg aria-hidden="true" class="icon small"><use href="#icon-check"/></svg></span><span>从分散记录，到清晰全貌</span></div>
+        <span class="art-corner corner-bottom">为认真记账的饰品玩家而做</span>
+      </div>
+    </section>
+    <div class="platform-band"><div class="container platform-band-inner"><p>三方交易记录，<strong>统一归档。</strong></p><div class="platform-wordmarks"><span><img src="/site-assets/buff.png" alt="" width="26" height="26">BUFF</span><span><img src="/site-assets/uu.png" alt="" width="26" height="26">悠悠有品</span><span><img src="/site-assets/steam.png" alt="" width="26" height="26">Steam</span></div><span class="band-note">个人饰品交易记录工具</span></div></div>
+
+    <section class="section container" id="features" aria-labelledby="features-title">
+      <div class="section-heading split-heading"><div><span class="eyebrow">把复杂留给账本</span><h2 id="features-title">看清交易，<br>也看清自己的账。</h2></div><p>买了多少、还持有多少、实际赚了多少。<br>从分散的订单中，找到你真正关心的答案。</p></div>
+      <div class="feature-grid">
+        <article class="feature"><div class="feature-icon"><svg aria-hidden="true" class="icon"><use href="#icon-layers"/></svg></div><span class="feature-number">01 / 交易归档</span><h3>三平台，一本账</h3><p>汇总本人 BUFF、悠悠与 Steam 买卖历史，按账户、物品与日期查看。告别在不同平台之间来回翻找。</p><div class="feature-foot">历史订单 · 同名汇总 · 分类筛选</div></article>
+        <article class="feature"><div class="feature-icon"><svg aria-hidden="true" class="icon"><use href="#icon-chart"/></svg></div><span class="feature-number">02 / 收益统计</span><h3>收入与利润，分得清</h3><p>分别呈现现金投入、持仓与已实现收益。挂刀、提现、直接转卖有各自的核算路径，回款与利润清楚区分。</p><div class="feature-foot">成本核算 · 收益趋势 · 期间汇总</div></article>
+        <article class="feature"><div class="feature-icon"><svg aria-hidden="true" class="icon"><use href="#icon-book"/></svg></div><span class="feature-number">03 / 持仓复盘</span><h3>手里的饰品，有据可查</h3><p>按历史买卖记录汇总持仓数量与平均成本，回看本人的实际成交。缺失的价格与来源会清楚标注，方便继续核对。</p><div class="feature-foot">持仓明细 · 平均成本 · 缺项提示</div></article>
+      </div>
+    </section>
+
+    <section class="preview-section" id="preview" aria-labelledby="preview-title">
+      <div class="container">
+        <div class="section-heading centered"><span class="eyebrow">一份账本，两种陪伴</span><h2 id="preview-title">在 Mac 上整理，<br class="mobile-break">在 iPhone 上随时看看。</h2><p>桌面端归档与分析，手机端轻松查阅。<br>连接自己的云端服务后，同一份账目，带在身边。</p></div>
+        <div class="device-stage">
+          <figure class="desktop-device">
+            <div class="window-top"><span class="traffic-lights"><i></i><i></i><i></i></span><span>饰品交易账本</span><span class="window-tag">macOS</span></div>
+            <!-- Replace only .screenshot-slot content with an <img> when real, redacted captures are ready. -->
+            <div class="screenshot-slot desktop-slot" data-screenshot="macos">
+              <div class="skeleton-sidebar" aria-hidden="true"><span class="skeleton-logo"></span><i></i><i></i><i></i><i></i><i></i></div>
+              <div class="skeleton-workspace" aria-hidden="true"><div class="skeleton-heading"></div><div class="skeleton-metrics"><i></i><i></i><i></i></div><div class="skeleton-chart"></div><div class="skeleton-lines"><i></i><i></i><i></i></div></div>
+              <div class="screenshot-message"><span class="placeholder-icon"><svg aria-hidden="true" class="icon"><use href="#icon-image"/></svg></span><strong>macOS 界面展示</strong><span>真实软件截图预留位</span><small>交易总览 / 收益报告 / 持仓明细</small></div>
+            </div>
+            <figcaption><span class="caption-dot"></span>桌面端 · 让每次复盘更从容</figcaption>
+          </figure>
+          <figure class="phone-device"><div class="phone-body"><div class="phone-island" aria-hidden="true"></div><div class="screenshot-slot phone-slot" data-screenshot="ios"><div class="phone-skeleton" aria-hidden="true"><i></i><div></div><span></span><span></span><span></span></div><div class="screenshot-message"><span class="placeholder-icon"><svg aria-hidden="true" class="icon"><use href="#icon-phone"/></svg></span><strong>iOS 随身账本</strong><span>真实截图预留位</span></div></div><div class="phone-home" aria-hidden="true"></div></div><figcaption>手机端 · 随手查一笔</figcaption></figure>
+        </div>
+        <p class="preview-note">当前为展示占位，真实 macOS 与 iOS 软件截图将在后续补充。</p>
+        <div class="device-descriptions"><article><svg aria-hidden="true" class="icon"><use href="#icon-desktop"/></svg><div><h3>macOS · 你的交易工作台</h3><p>读取本人交易历史，在本机完成归档、成本核算和收益复盘。</p></div></article><article><svg aria-hidden="true" class="icon"><use href="#icon-phone"/></svg><div><h3>iOS · 你的随身账本</h3><p>连接自己的云端快照，随时查看账户、交易、持仓与收益。</p></div></article></div>
+      </div>
+    </section>
+
+    <section class="section container principles" id="principles" aria-labelledby="principles-title">
+      <div class="principles-heading"><span class="eyebrow">清楚，也安心</span><h2 id="principles-title">自己的账，<br>自己掌握。</h2><p>从本机记录出发，<br>保留数据的来处与每一步核算依据。</p><div class="privacy-seal"><svg aria-hidden="true" class="icon"><use href="#icon-shield"/></svg><span>本地优先<br><small>只读连接交易平台</small></span></div></div>
+      <div class="principle-list"><article><span>01</span><div><h3>平台会话留在本机</h3><p>通过独立的本机会话登录平台。连接云端时同步归档快照，平台 Cookie 和登录凭据保存在本机。</p></div></article><article><span>02</span><div><h3>专注记录与分析</h3><p>读取你的交易记录，用于个人账目整理。平台购买、出售、发货和交易确认仍由你亲自完成。</p></div></article><article><span>03</span><div><h3>有依据，才计入收益</h3><p>已实现收益、持仓和未提现余额分别呈现。缺少金额或成本来源时，保留缺项，让每个数字的含义更清楚。</p></div></article></div>
+    </section>
+
+    <section class="opensource-section container" id="opensource" aria-labelledby="opensource-title"><div class="opensource-panel"><div class="opensource-copy"><span class="eyebrow">一起把这本账做得更好</span><h2 id="opensource-title">为饰品玩家而做，<br>也向开发者敞开。</h2><p>项目正在整理开源源码与使用说明。<br>欢迎到 GitHub 关注进展，分享建议，一起完善。</p><a class="button light" href="https://github.com/su4g/game-asset-settle" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" class="icon"><use href="#icon-github"/></svg>前往 GitHub<svg aria-hidden="true" class="icon small"><use href="#icon-external"/></svg></a></div><div class="repository-card"><div class="repo-heading"><svg aria-hidden="true" class="icon"><use href="#icon-github"/></svg><span>公开仓库</span></div><p class="repo-owner">su4g /</p><p class="repo-name">game-asset-settle</p><p class="repo-description">CSGO、Dota2 饰品账本系统</p><div class="repo-tags"><span>macOS</span><span>iOS</span><span>个人交易账本</span></div><div class="repo-status"><span class="status-dot"></span>源码与发布版本整理中</div></div></div></section>
+
+    <section class="section container faq-section" aria-labelledby="faq-title"><div class="section-heading"><span class="eyebrow">开始之前</span><h2 id="faq-title">你可能还想了解</h2></div><div class="faq-list"><details><summary>这是 BUFF、悠悠或 Steam 的官方软件吗？<span aria-hidden="true">+</span></summary><p>这是面向个人饰品玩家的独立项目，与 BUFF、悠悠有品、Steam 及其运营方无隶属关系。平台名称与图标用于标识交易记录来源。</p></details><details><summary>macOS 和 iOS 分别负责什么？<span aria-hidden="true">+</span></summary><p>macOS 客户端负责本人平台交易的只读采集、本机归档与统计。iOS 客户端通过连接文件读取你配置的云端快照，查看最后上传的数据；手机端不直接采集平台交易。</p></details><details><summary>现在可以在哪里下载或查看源码？<span aria-hidden="true">+</span></summary><p>项目正在准备公开源码、安装说明与发布版本。请通过 <a href="https://github.com/su4g/game-asset-settle" target="_blank" rel="noopener noreferrer">GitHub 仓库</a>关注进度，具体可用内容以仓库更新为准。</p></details><details><summary>持仓估值也算作已经赚到的钱吗？<span aria-hidden="true">+</span></summary><p>持仓估值、Steam 未提现余额与已实现收益分别展示。收益统计以实际交易与可靠成本依据为基础；金额、来源或历史不完整时会保留缺项。</p></details></div></section>
+  </main>
+  <footer class="site-footer"><div class="container footer-top"><a class="brand" href="#"><img src="/site-assets/app-icon.png" alt="" width="36" height="36"><span>饰品交易账本<span class="brand-subtitle">让交易有迹可循。</span></span></a><div><a href="#features">功能亮点</a><a href="#preview">双端体验</a><a href="https://github.com/su4g/game-asset-settle" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div><div class="container footer-bottom"><span>© 2026 su4g · 为饰品玩家而做</span><span>独立开源筹备项目 · 平台商标归各自权利人所有</span></div></footer>
+</body>
+</html>

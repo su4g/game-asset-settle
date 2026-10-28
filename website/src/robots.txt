@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /wedding-assets/
+Sitemap: https://www.suag.top/sitemap.xml
