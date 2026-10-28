@@ -1,0 +1,9 @@
+[Unit]
+Description=Back up the dedicated Game Asset Settle database
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash /opt/game-asset-settle/current/cloud/backup.sh
+UMask=0077
+Nice=15

@@ -1,0 +1,92 @@
+{
+  "ok": true,
+  "result": {
+    "profileId": "account-1",
+    "snapshotVersion": "0:empty",
+    "uploadedAt": "2026-10-27T00:00:00.000Z",
+    "total": 1,
+    "page": 1,
+    "pageSize": 20,
+    "summary": {
+      "craftCount": 1,
+      "soldCount": 1,
+      "pendingCount": 0,
+      "currencies": [
+        {
+          "currencyCode": "CNY",
+          "cashProfitCents": 500,
+          "steamProfitCents": 0,
+          "cashCount": 1,
+          "steamCount": 0
+        }
+      ]
+    },
+    "archives": [
+      {
+        "accountId": "steam:76561198000000001",
+        "complete": true,
+        "eventCount": 1,
+        "craftCount": 1,
+        "syncedAt": "2026-10-28T00:00:00.000Z"
+      }
+    ],
+    "rows": [
+      {
+        "id": "steam:76561198000000001:inventory:aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "profileId": "account-1",
+        "at": "2026-10-27T12:05:00.000Z",
+        "output": {
+          "name": "Output (Minimal Wear)",
+          "marketHashName": "Output (Minimal Wear)",
+          "quantity": 1,
+          "collection": "set_test"
+        },
+        "currencyCode": "CNY",
+        "cost": {
+          "cash": 1000,
+          "steam": 0,
+          "basis": 1000
+        },
+        "state": "sold",
+        "complete": true,
+        "cashProfitCents": 500,
+        "steamProfitCents": null,
+        "reasons": [],
+        "inputs": [
+          {
+            "name": "Input (Minimal Wear)",
+            "marketHashName": "Input (Minimal Wear)",
+            "quantity": 10,
+            "collection": "set_test",
+            "cost": {
+              "cash": 1000,
+              "steam": 0,
+              "basis": 1000
+            },
+            "reason": "",
+            "parentCraftIds": [],
+            "sources": [
+              {
+                "id": "[\"buff\",\"buff:one:730:buy:history:buy1\"]",
+                "platform": "buff",
+                "orderId": "buy1",
+                "tradedAt": "2026-10-26T00:00:00.000Z",
+                "quantity": 10,
+                "totalCents": 1000,
+                "currencyCode": "CNY"
+              }
+            ]
+          }
+        ],
+        "sale": {
+          "platform": "buff",
+          "orderId": "sell1",
+          "tradedAt": "2026-10-27T13:00:00.000Z",
+          "currencyCode": "CNY",
+          "netCents": 1500
+        }
+      }
+    ],
+    "scopeNote": "只复盘已完成的炼金。现金收益与 Steam 余额盈亏分开；缺失成本和未确认出售不计利润。炼金结果独立展示，不与交易收益报告相加。"
+  }
+}

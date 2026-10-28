@@ -1,0 +1,10 @@
+.build/
+build/
+*.log
+*.xcuserstate
+xcuserdata/
+*.buffconnection
+*.mobileprovision
+*.p12
+*.p8
+*.pem

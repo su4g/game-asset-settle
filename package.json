@@ -1,0 +1,45 @@
+{
+  "name": "game-asset-settle",
+  "private": true,
+  "version": "0.16.0",
+  "main": "desktop/main.cjs",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "setup": "node scripts/ledger-service.cjs setup",
+    "start": "node server/index.cjs",
+    "service:start": "node scripts/ledger-service.cjs start",
+    "service:stop": "node scripts/ledger-service.cjs stop",
+    "service:status": "node scripts/ledger-service.cjs status",
+    "service:install": "node scripts/ledger-service.cjs install",
+    "backup": "node scripts/ledger-service.cjs backup",
+    "desktop": "electron .",
+    "desktop:package": "node scripts/package-desktop.cjs",
+    "desktop:test": "node --test tests/desktop*.test.cjs",
+    "desktop:verify": "node scripts/check-desktop.cjs",
+    "test": "node --test tests/*.test.cjs",
+    "test:pg": "PG_INTEGRATION=1 node --test tests/ledger.integration.test.cjs tests/buy-sync.integration.test.cjs tests/history-archive.integration.test.cjs",
+    "cloud:test": "node --test tests/cloud.test.cjs tests/cloud-alchemy.test.cjs tests/cloud-cache.test.cjs tests/cloud.integration.test.cjs tests/desktop-cloud-sync.test.cjs",
+    "cloud:test:pg": "CLOUD_PG_INTEGRATION=1 node --test tests/cloud.test.cjs tests/cloud-alchemy.test.cjs tests/cloud.integration.test.cjs",
+    "cloud:configure": "node scripts/cloud-config.cjs",
+    "cloud:package": "node scripts/cloud-prepare-release.cjs",
+    "audit:public": "node scripts/audit-public.cjs"
+  },
+  "dependencies": {
+    "parse5": "^7.3.0",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@electron/packager": "20.3.0",
+    "electron": "44.7.2",
+    "jsdom": "^26.1.0"
+  },
+  "description": "BUFF、悠悠、Steam 三平台饰品交易账本：macOS 本机归档与 iOS 查询",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/su4g/game-asset-settle.git"
+  },
+  "author": "su4g"
+}

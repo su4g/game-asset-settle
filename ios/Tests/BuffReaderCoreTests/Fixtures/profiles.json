@@ -1,0 +1,46 @@
+{
+  "ok": true,
+  "result": {
+    "profiles": [
+      {
+        "id": "account-1",
+        "name": "账户一",
+        "bindings": {
+          "buff": "buff:one",
+          "uu": null,
+          "steam": null
+        },
+        "recordCount": 2,
+        "collectedAt": "2026-10-27T00:00:00.000Z",
+        "uploadedAt": "2026-10-27T00:00:00.000Z",
+        "state": "synced",
+        "status": {
+          "platforms": {
+            "buff": {
+              "phase": "completed",
+              "message": "已同步"
+            },
+            "uu": {
+              "phase": "login-required",
+              "message": "请重新登录"
+            }
+          }
+        }
+      },
+      {
+        "id": "account-2",
+        "name": "账户二",
+        "bindings": {
+          "buff": null,
+          "uu": null,
+          "steam": null
+        },
+        "recordCount": 0,
+        "collectedAt": null,
+        "uploadedAt": null,
+        "state": "not-synced",
+        "status": {}
+      }
+    ]
+  }
+}

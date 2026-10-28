@@ -1,0 +1,49 @@
+{
+  "ok": true,
+  "result": {
+    "rows": [
+      {
+        "id": "[\"buff\",\"buff:one:730:sell:history:sell1\"]",
+        "platform": "buff",
+        "platformName": "BUFF",
+        "accountId": "buff:one",
+        "appid": 730,
+        "orderId": "sell1",
+        "name": "同名物品",
+        "marketHashName": "Same Item",
+        "direction": "sell",
+        "currencyCode": "CNY",
+        "quantity": 1,
+        "actualTotalCents": 200,
+        "tradedAt": "2026-01-02T00:00:00.000Z",
+        "state": "SUCCESS",
+        "completed": true,
+        "channel": "history",
+        "source": "buff"
+      },
+      {
+        "id": "[\"buff\",\"buff:one:730:buy:history:buy1\"]",
+        "platform": "buff",
+        "platformName": "BUFF",
+        "accountId": "buff:one",
+        "appid": 730,
+        "orderId": "buy1",
+        "name": "同名物品",
+        "marketHashName": "Same Item",
+        "direction": "buy",
+        "currencyCode": "CNY",
+        "quantity": 1,
+        "actualTotalCents": 100,
+        "tradedAt": "2026-01-01T00:00:00.000Z",
+        "state": "SUCCESS",
+        "completed": true,
+        "channel": "history",
+        "source": "buff"
+      }
+    ],
+    "total": 2,
+    "page": 1,
+    "pageSize": 50,
+    "suppressedCsvCount": 0
+  }
+}

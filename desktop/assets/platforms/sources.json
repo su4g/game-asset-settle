@@ -1,0 +1,32 @@
+{
+  "note": "原始平台商标，仅用于标识对应交易来源；保留官方颜色。应用运行时不发出图标网络请求。",
+  "assets": [
+    {
+      "file": "buff.png",
+      "platform": "BUFF",
+      "sourcePage": "https://buff.163.com/",
+      "sourceAsset": "https://market.fp.ps.netease.com/file/59b156975e6027bce06e8f6ceTyFGdsj",
+      "retrievedAt": "2026-10-28",
+      "processing": "官网 favicon，原始 32px PNG",
+      "sha256": "19aabcd57c6dcdf79a97f516bcfcae70a67493f9b45fa9a101dc8e6691968999"
+    },
+    {
+      "file": "steam.png",
+      "platform": "Steam",
+      "sourcePage": "https://store.steampowered.com/",
+      "sourceAsset": "https://store.steampowered.com/favicon.ico",
+      "retrievedAt": "2026-10-28",
+      "processing": "官网 favicon，使用 sips 无损提取 256px PNG",
+      "sha256": "5e3c06f65e5fca8b089b1b1d165f47992d33fd0ab51527af7bd2ea17464150c7"
+    },
+    {
+      "file": "uu.png",
+      "platform": "悠悠有品",
+      "sourcePage": "https://www.youpin898.com/",
+      "sourceAsset": "https://www.youpin898.com/favicon.ico",
+      "retrievedAt": "2026-10-28",
+      "processing": "官网 favicon，使用 sips 无损提取 64px PNG",
+      "sha256": "5265c5ec2f3c3e493110a5db0466d301d8e690a3a29571feb9a00dadba78eb55"
+    }
+  ]
+}

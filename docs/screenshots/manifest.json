@@ -1,0 +1,32 @@
+[
+  {
+    "file": "macos-overview.png",
+    "sha256": "4702cfdfa631e8795879491fbab734b5d274cf86fda7c5ef88de22a461fe2dc3",
+    "data": "synthetic",
+    "capture": "Electron isolated UI verification"
+  },
+  {
+    "file": "macos-accounts.png",
+    "sha256": "9e3b1191ad6e9a6a28030b6a50690201aaf6f561f76403486aed14898a9f0558",
+    "data": "synthetic",
+    "capture": "Electron isolated UI verification"
+  },
+  {
+    "file": "macos-report.png",
+    "sha256": "bffcc73270a9b6143b09389bbcb15aac9f42a99b3343bf0d237c1609609093e7",
+    "data": "synthetic",
+    "capture": "Electron isolated UI verification"
+  },
+  {
+    "file": "macos-alchemy.png",
+    "sha256": "05b444c939c8bdf11bdde00e1efaab55e5d900af133bcbc3fab6e333128534f5",
+    "data": "synthetic",
+    "capture": "Electron isolated UI verification"
+  },
+  {
+    "file": "ios-overview-catalyst.png",
+    "sha256": "7c3a933b61f53956db4d5e34478fba14c7a3adba9c2c03cbce99de85dfc9fe93",
+    "data": "synthetic",
+    "capture": "SwiftUI Mac Catalyst preview"
+  }
+]

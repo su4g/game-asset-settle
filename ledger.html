@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="zh-CN">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>交易账本 · BUFF 价格助手</title><link rel="stylesheet" href="ledger.css"></head>
+<body>
+<main class="ledger-app">
+  <header class="ledger-header"><div><div class="eyebrow">BUFF MARKET HELPER / 本地账本</div><h1>交易账本<span class="tag">CNY</span></h1><p class="muted">从买入到到账，每一笔都有据可查。</p></div><div class="header-actions"><span id="connection" role="status">连接数据库…</span><button id="openFull">打开完整账本 ↗</button><button id="refresh">刷新</button></div></header>
+  <div id="notice" class="notice" role="status" aria-live="polite" hidden></div>
+  <section class="metrics" id="metrics" aria-label="资金与盈亏统计"></section>
+  <section class="wallet-bar"><div id="walletSummary">正在读取 Steam 资金成本…</div><button id="walletButton">资金调整</button><button id="manualButton">＋ 补录购买</button><button id="buySyncButton" class="primary">同步 BUFF 买入</button><button id="syncButton">同步卖出记录</button></section>
+  <section class="chart-section"><div class="section-heading"><div><h2>累计盈亏</h2><p class="muted" id="coverage">已实现现金盈亏 · 收入按实际到账日计入</p></div><div class="chart-controls"><label>估值提现折扣<input id="targetRatio" type="number" min="0" max="100" step="0.1" value="8.6" aria-label="估值提现折扣">折</label><select id="chartDays" aria-label="盈亏曲线时间范围"><option value="7">近 7 天</option><option value="30" selected>近 30 天</option><option value="90">近 90 天</option><option value="0">全部</option></select></div></div><div id="pnlChart" class="chart"></div><div class="chart-legend"><span><i></i>已实现盈亏</span><span><i class="dashed"></i>包含持仓估值</span><span class="muted">缺价时曲线断开 · 红色盈利 / 绿色亏损</span></div></section>
+  <section class="records-section"><div class="records-head"><div class="record-tabs" role="tablist" aria-label="交易方向"><button role="tab" aria-selected="true" data-direction="knife">挂刀记录</button><button role="tab" aria-selected="false" data-direction="cashout">提现记录</button><button role="tab" aria-selected="false" data-direction="tasks">待处理订单</button></div><button id="pollPrices">更新持仓价格</button></div>
+    <div id="filters" class="filters"><input id="search" type="search" placeholder="搜索物品或订单号" aria-label="搜索物品或订单号"><select id="game" aria-label="游戏"><option value="">全部游戏</option><option value="730">CS2</option><option value="570">Dota 2</option></select><select id="tradeStatus" aria-label="交易状态"><option value="">全部状态</option><option value="unverified">待核对购买</option><option value="awaiting_delivery">待收货</option><option value="cooling">冷却中</option><option value="estimated_cooldown">解锁待核验</option><option value="ready">可出售</option><option value="partial">部分售出</option><option value="pending_receipt">已售出·待到账</option><option value="completed">已完成</option><option value="refunded">已退款</option></select><label>买入日期<input id="dateFrom" type="date" aria-label="买入开始日期"></label><label>至<input id="dateTo" type="date" aria-label="买入结束日期"></label></div>
+    <p id="directionHint" class="direction-hint"></p>
+    <div class="ledger-table-wrap" tabindex="0" aria-label="交易记录与实际到账回填，可横向滚动"><table id="tradesTable"><thead><tr><th>物品 / 订单</th><th>买入日期</th><th>实际买入</th><th>持仓</th><th>折扣</th><th>状态 / 解锁</th><th>当前净卖价</th><th>7 天走势</th><th class="entry">本次售出数量</th><th class="entry">净到手单价</th><th class="entry">实际净到账总额</th><th class="entry">成交 / 到账时间</th><th>累计结果</th><th class="sticky-end">回填操作</th></tr></thead><tbody id="tradeRows"></tbody></table></div>
+    <div id="tasks" hidden></div><footer class="pagination"><span id="recordCount">0 条记录</span><div><button id="prevPage">上一页</button><span id="pageNumber">1</span><button id="nextPage">下一页</button></div></footer>
+  </section>
+  <footer class="ledger-footer"><span id="lastSync">尚未同步</span><span>账本永久存于本机 PostgreSQL · 报价缓存清理不影响交易记录</span></footer>
+</main>
+<dialog id="dialog"><div class="dialog-heading"><h2 id="dialogTitle"></h2><button id="dialogClose" aria-label="关闭">×</button></div><div id="dialogBody"></div><p id="dialogError" class="error" role="alert"></p></dialog>
+<script src="common.js"></script><script src="buy-sync-ui.js"></script><script src="ledger-ui.js"></script>
+</body></html>

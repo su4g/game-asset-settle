@@ -1,0 +1,50 @@
+{
+  "ok": true,
+  "result": {
+    "profileId": "account-1",
+    "collectedAt": "2026-10-27T00:00:00.000Z",
+    "uploadedAt": "2026-10-27T00:00:00.000Z",
+    "status": {
+      "platforms": {
+        "buff": {
+          "phase": "completed",
+          "message": "已同步"
+        },
+        "uu": {
+          "phase": "login-required",
+          "message": "请重新登录"
+        }
+      }
+    },
+    "sourceStatus": {
+      "buff": {
+        "lastSyncedAt": "2026-10-26T00:00:00.000Z",
+        "recordCount": 2,
+        "accounts": [
+          {
+            "accountId": "buff:one",
+            "recordCount": 2,
+            "lastSyncedAt": "2026-10-26T00:00:00.000Z",
+            "runs": [
+              {
+                "channel": "history",
+                "complete": true,
+                "syncedAt": "2026-10-26T00:00:00.000Z"
+              }
+            ]
+          }
+        ]
+      },
+      "uu": {
+        "lastSyncedAt": null,
+        "recordCount": 0,
+        "accounts": []
+      },
+      "steam": {
+        "lastSyncedAt": null,
+        "recordCount": 0,
+        "accounts": []
+      }
+    }
+  }
+}

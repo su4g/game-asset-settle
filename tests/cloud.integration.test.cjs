@@ -1,0 +1,72 @@
+"use strict";
+const test = require("node:test"), assert = require("node:assert/strict"), os = require("node:os");
+const { Client } = require("pg");
+const { CloudStore } = require("../cloud/store.cjs");
+const { fixture, alchemyFixture } = require("./cloud-fixture.cjs");
+const { view } = require("../cloud/views.cjs");
+const { accountKey } = require("../desktop/order-ledger.cjs");
+
+test("云端隔离 PostgreSQL：两终端账户归属、幂等、事务回滚与重启持久化", { skip: process.env.CLOUD_PG_INTEGRATION !== "1" }, async t => {
+  const name = `buff_goods_test_cloud_${process.pid}_${Date.now()}`;
+  assert.match(name, /^buff_goods_test_cloud_\d+_\d+$/);
+  const cfg = { host: process.env.PGHOST || "127.0.0.1", port: Number(process.env.PGPORT || 5432), user: process.env.PGUSER || os.userInfo().username, password: process.env.PGPASSWORD };
+  const admin = new Client({ ...cfg, database: "postgres" }); await admin.connect(); await admin.query(`CREATE DATABASE "${name}"`);
+  let store = new CloudStore({ ...cfg, database: name });
+  t.after(async () => { await store.close(); await admin.query(`DROP DATABASE "${name}" WITH (FORCE)`); await admin.end(); });
+  // A sentinel outside the application's schema proves migration leaves other data alone.
+  await store.pool.query("CREATE TABLE public.unrelated_business(id int PRIMARY KEY, value text); INSERT INTO public.unrelated_business VALUES(1,'keep-me')");
+  await store.migrate(); await store.migrate();
+  await store.warm(); assert.equal(store.pool.totalCount, 4); assert.equal(store.pool.idleCount, 4);
+  assert.equal((await Promise.all(Array.from({ length: 11 }, () => store.list()))).length, 11);
+  assert.deepEqual((await store.list()).map(p => p.id), ["account-1", "account-2"]);
+  const first = fixture(), second = fixture("account-2", "two", 1000);
+  const accepted = await store.save(first, "account-1"); assert.equal(accepted.deviceId, first.deviceId); assert.equal(accepted.duplicate, false);
+  const retry = await store.save(first, "account-1"); assert.equal(retry.duplicate, true); assert.equal(retry.uploadedAt, accepted.uploadedAt);
+  assert.equal((await store.get("account-2")).snapshot, null);
+  await assert.rejects(store.save(first, "account-2"), error => error.code === "PROFILE_FORBIDDEN");
+  await store.save(second, "account-2");
+  const rowA = await store.get("account-1"), rowB = await store.get("account-2");
+  assert.equal(view(rowA, "overview").currencies[0].profitCents, 100); assert.equal(view(rowB, "overview").currencies[0].profitCents, -800);
+  const sameSequence = structuredClone(first); sameSequence.profiles[0].name = "错误覆盖";
+  await assert.rejects(store.save(sameSequence, "account-1"), error => error.code === "SEQUENCE_CONFLICT");
+  const wrongDevice = structuredClone(first); wrongDevice.sequence = 2; wrongDevice.deviceId = "another-device";
+  await assert.rejects(store.save(wrongDevice, "account-1"), error => error.code === "DEVICE_CONFLICT");
+  const truncated = structuredClone(first); truncated.sequence = 2; truncated.profiles[0].input.buff.accounts["buff:one"].records = [];
+  await assert.rejects(store.save(truncated, "account-1"), error => error.code === "HISTORY_TRUNCATED");
+  assert.equal((await store.get("account-1")).sequence, 1); assert.deepEqual((await store.get("account-1")).snapshot, rowA.snapshot);
+  // Both groups may call a local CSV source the same display name.
+  const nextA = structuredClone(first), nextB = structuredClone(second); nextA.sequence = 2; nextB.sequence = 2; nextA.profiles[0].csvScopes = ["默认账户"]; nextB.profiles[0].csvScopes = ["默认账户"];
+  await Promise.all([store.save(nextA, "account-1"), store.save(nextB, "account-2")]);
+  assert.equal((await store.pool.query("SELECT * FROM buff_cloud.bindings WHERE platform='csv'")).rowCount, 2);
+  await assert.rejects(store.save(first, "account-1"), error => error.code === "STALE_SEQUENCE");
+  // Concurrent proposals claiming one new UU identity: one commit, one whole rollback.
+  const shared = (base, seq) => {
+    const value = structuredClone(base), profile = value.profiles[0]; value.sequence = seq; profile.bindings.uu = "uu:shared";
+    profile.options.accountLinks[0].accountKeys.push(accountKey("uu", "uu", "uu:shared")); return value;
+  };
+  const attempts = await Promise.allSettled([store.save(shared(nextA, 3), "account-1"), store.save(shared(nextB, 3), "account-2")]);
+  assert.equal(attempts.filter(result => result.status === "fulfilled").length, 1); assert.equal(attempts.find(result => result.status === "rejected").reason.code, "ACCOUNT_OWNERSHIP_CONFLICT");
+  const loser = attempts[0].status === "rejected" ? "account-1" : "account-2"; assert.equal((await store.get(loser)).sequence, 2); assert.equal((await store.get(loser)).snapshot.bindings.uu, null);
+  assert.equal((await store.pool.query("SELECT count(*) AS count FROM buff_cloud.sync_audit")).rows[0].count, "5");
+  await store.close(); store = new CloudStore({ ...cfg, database: name });
+  assert.equal((await store.get("account-2")).snapshot.bindings.buff, "buff:two"); assert.equal((await store.pool.query("SELECT value FROM public.unrelated_business WHERE id=1")).rows[0].value, "keep-me");
+  assert.throws(() => new CloudStore({ ...cfg, database: "postgres" }), /独立/);
+  const savedA = await store.get("account-1"), withInventory = alchemyFixture();
+  const next = structuredClone(first); next.sequence = savedA.sequence + 1;
+  next.profiles[0] = structuredClone(savedA.snapshot);
+  next.profiles[0].bindings.steam = withInventory.profiles[0].bindings.steam;
+  next.profiles[0].input.steam = withInventory.profiles[0].input.steam;
+  next.profiles[0].options.accountLinks[0].accountKeys.push(accountKey("steam", "steam", next.profiles[0].bindings.steam));
+  await store.save(next, "account-1");
+  const inventorySaved = await store.get("account-1");
+  assert.equal(view(inventorySaved, "alchemy").total, 1);
+  const dropInventory = structuredClone(next); dropInventory.sequence++;
+  delete dropInventory.profiles[0].input.steam.accounts[next.profiles[0].bindings.steam].inventoryHistory;
+  await assert.rejects(store.save(dropInventory, "account-1"), error => error.code === "HISTORY_TRUNCATED");
+  assert.equal((await store.get("account-1")).sequence, next.sequence);
+  const eventConflict = structuredClone(next); eventConflict.sequence++;
+  eventConflict.profiles[0].input.steam.accounts[next.profiles[0].bindings.steam].inventoryHistory.events[0].items[0].marketHashName = "Changed identity";
+  await assert.rejects(store.save(eventConflict, "account-1"), error => error.code === "INVENTORY_IDENTITY_CONFLICT");
+  await store.close(); store = new CloudStore({ ...cfg, database: name });
+  assert.equal(view(await store.get("account-1"), "alchemy").total, 1);
+});

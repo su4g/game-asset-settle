@@ -1,0 +1,120 @@
+"use strict";
+const test=require("node:test"),assert=require("node:assert/strict"),os=require("node:os"),fs=require("node:fs/promises"),path=require("node:path");
+const {randomUUID}=require("node:crypto"),{Client}=require("pg"),{Store}=require("../server/store.cjs"),{createServer}=require("../server/index.cjs"),{HistoryStore}=require("../server/history-store.cjs"),{HistoryRepository}=require("../desktop/history-repository.cjs");
+const {normalizeOrder}=require("../desktop/buff-orders.cjs");
+const header="Item Name,Acted On,Display Price,Price in Cents,Type,Market Name,App Id,Asset Id\n";
+const line=(id="",price=100)=>`Test Sword,2026/10/21,¥ ${(price/100).toFixed(2)},${price},purchase,Inscribed Test Sword,570,${id}`;
+const row=extra=>normalizeOrder({id:"order-1",goods_id:"1",quantity:2,price:"1.00",state:"SUCCESS",pay_time:"2026-10-21 00:00:00",...extra},{"1":{name:"铭刻 测试剑",market_hash_name:"Inscribed Test Sword",appid:570}},{accountId:"buff:test",appid:570,direction:"buy",channel:"history",observedAt:"2026-10-21T01:00:00Z"});
+test("历史归档 PostgreSQL：增量、回滚、重启与名称映射，不写交易账本",{skip:process.env.PG_INTEGRATION!=="1"},async t=>{
+ const name=`buff_goods_test_history_${process.pid}_${Date.now()}`,cfg={host:process.env.PGHOST||"127.0.0.1",port:Number(process.env.PGPORT||5432),user:process.env.PGUSER||os.userInfo().username,password:process.env.PGPASSWORD};
+ const admin=new Client({...cfg,database:"postgres"});await admin.connect();await admin.query(`CREATE DATABASE "${name}"`);
+ const store=new Store({...cfg,database:name}),history=new HistoryStore(store.pool),dir=await fs.mkdtemp(path.join(os.tmpdir(),"buff-history-"));let server;
+ t.after(async()=>{if(server)await new Promise(resolve=>server.close(resolve));await store.close();await admin.query(`DROP DATABASE "${name}" WITH(FORCE)`);await admin.end();await fs.rm(dir,{recursive:true,force:true});});
+ await store.migrate();await store.migrate();
+ await t.test("同一 CSV 重复、重叠及并发导入幂等；无 ID 同价两笔保留",async()=>{
+   const body={fileName:"交易.csv",text:header+[line(),line(),line("a")].join("\n"),scope:"账户 A"};
+   const results=await Promise.all([history.importCsv(body),history.importCsv(body)]);
+   assert.equal(results.reduce((n,r)=>n+r.inserted,0),3);assert.equal(results.reduce((n,r)=>n+r.skipped,0),3);
+   const original=(await history.csv()).rows,overlap={...body,fileName:"重叠.csv",text:header+[line("a"),line(),line(),line("b")].join("\n")};
+   const next=await history.importCsv(overlap);assert.deepEqual([next.inserted,next.updated,next.skipped,next.total],[1,3,0,4]);
+   // Overlap refreshes the document/row evidence used for same-day ordering;
+   // it must never change an existing trade's identity, amount or quantity.
+   const overlapping=(await new HistoryStore(store.pool).csv()).rows;
+   assert.equal(overlapping.length,4);assert.equal(new Set(overlapping.map(row=>row.key)).size,4);
+   for(const before of original){const after=overlapping.find(row=>row.key===before.key);assert(after);assert.equal(after.totalCents,before.totalCents);assert.equal(after.quantity,before.quantity);assert.notEqual(after.sourceSequence.documentHash,before.sourceSequence.documentHash);}
+   assert.equal(new Set(overlapping.map(row=>row.sourceSequence.documentHash)).size,1);
+   assert.equal(overlapping.reduce((n,row)=>n+row.totalCents,0),400);assert.equal(overlapping.reduce((n,row)=>n+row.quantity,0),4);
+   const repeat=await history.importCsv(overlap);assert.deepEqual([repeat.inserted,repeat.updated,repeat.skipped,repeat.total],[0,0,4,4]);assert.deepEqual((await history.csv()).rows,overlapping);
+   assert.equal((await history.importCsv({...body,scope:"账户 B"})).inserted,3);
+   const before=await history.csv();await assert.rejects(history.importCsv({...body,text:body.text+"\n坏数据"}));assert.deepEqual((await history.csv()).rows,before.rows);
+ });
+ await t.test("订单号允许补齐金额；资产身份冲突时整批回滚",async()=>{
+   const mapping={columns:{date:"日期",name:"中文",marketName:"英文",orderId:"订单",assetId:"资产",price:"金额",quantity:"数量"},unit:"cents",priceMode:"total",game:"570",platform:"buff",type:"purchase",currency:"CNY"};
+   const body={scope:"账户 C",fileName:"BUFF.csv",mapping,text:"日期,中文,英文,订单,资产,金额,数量\n2026-10-21,铭刻 测试剑,Inscribed Test Sword,one,asset,301,2"};
+   assert.equal((await history.importCsv(body)).inserted,1);assert.equal((await history.importCsv({...body,text:body.text.replace(",301,",",302,")})).updated,1);
+   const before=(await history.csv()).rows;await assert.rejects(history.importCsv({...body,text:body.text.replace("Inscribed Test Sword","Other Sword")}),/名称冲突/);assert.deepEqual((await history.csv()).rows,before);
+ });
+ await t.test("旧 BUFF 缓存迁移一次，修订号保护并发，名字自动用于已导入 CSV",async()=>{
+   const account={id:"buff:test",nickname:"测试"},data={version:1,activeAccount:account.id,accounts:{[account.id]:{account,records:[row()],runs:[]}},cooldownUntil:0};
+   const token=randomUUID();server=createServer({store,token,extensionOrigins:[]});await new Promise(resolve=>server.listen(0,"127.0.0.1",resolve));
+   const configFile=path.join(dir,"config.json"),legacy=path.join(dir,"buff.json");await fs.writeFile(configFile,JSON.stringify({token,port:server.address().port}));await fs.writeFile(legacy,JSON.stringify(data));
+   const repository=new HistoryRepository(configFile,legacy);assert.deepEqual(await repository.load(),data);assert.equal((await history.buff()).revision,1);
+   const second=new HistoryRepository(configFile,legacy);assert.deepEqual(await second.load(),data);assert.equal((await history.buff()).revision,1);
+   const updated=structuredClone(data);updated.accounts[account.id].records[0].paidTotalCents=198;await repository.save(updated);
+   await assert.rejects(second.save(data),/其他窗口/);assert.equal((await history.buff()).data.accounts[account.id].records[0].paidTotalCents,198);
+   const names=await history.names();assert.equal(names.items["570:Inscribed Test Sword"].name,"铭刻 测试剑");
+   const H=require("../desktop/market-history.js"),csv=await history.csv();assert.equal(H.itemName(csv.rows.find(r=>r.platform==="steam"),names).name,"铭刻 测试剑");
+   assert.equal(await fs.readFile(legacy,"utf8"),JSON.stringify(data));
+   const before=await history.buff(),bad=structuredClone(before.data);bad.accounts[account.id].records=[];await assert.rejects(history.saveBuff({revision:before.revision,data:bad}),/不能移除/);assert.deepEqual(await history.buff(),before);
+ });
+ await t.test("来源冲突不猜译；手动映射经重启和再次同步仍优先",async()=>{
+   const current=await history.buff(),data=structuredClone(current.data);data.accounts["buff:test"].records[0].name="另一个中文名称";await history.saveBuff({revision:current.revision,data});
+   let entry=(await history.names()).items["570:Inscribed Test Sword"];assert.equal(entry.conflict,true);assert.equal(entry.name,"");
+   await history.saveName({appid:"570",marketHashName:"Inscribed Test Sword",name:"铭刻 已核实剑"});
+   const next=await history.buff();next.data.accounts["buff:test"].records[0].name="第三个名字";await history.saveBuff({revision:next.revision,data:next.data});
+   entry=(await new HistoryStore(store.pool).names()).items["570:Inscribed Test Sword"];assert.equal(entry.name,"铭刻 已核实剑");assert.equal(entry.custom,true);
+   await history.saveName({appid:"570",marketHashName:"Inscribed Test Sword",name:"旧手动名称",onlyIfMissing:true});assert.equal((await history.names()).items["570:Inscribed Test Sword"].name,"铭刻 已核实剑");
+   await history.saveName({appid:"730",marketHashName:"Inscribed Test Sword",name:"另一个游戏"});assert.equal((await history.names()).items["570:Inscribed Test Sword"].name,"铭刻 已核实剑");
+ });
+ await t.test("悠悠归档：同单多件、重启去重、版本冲突及中英文映射",async()=>{
+   const {UuOrders}=require("../desktop/uu-orders.cjs");
+   const configFile=path.join(dir,"config.json"), calls=[];let templateId;
+   const fixture=async(url,init)=>{
+     calls.push(url);const data=url.endsWith("getUserInfo")?{UserId:"99",NickName:"悠悠测试"}:{orderList:[{orderId:"uu-order",id:"100",orderType:1,saleOrderType:1,commodityAmount:203,paymentAmount:203,totalFeeAmount:0,orderStatus:340,orderStatusName:"已完成",commodityNum:2,finishOrderTime:"2026-10-21 12:00:00",productDetailList:[1,2].map(n=>({commodityId:String(n),templateId,price:100+n,commodityName:"测试武器箱",marketHashName:"Test Case"}))}],hasNext:false};
+     return new Response(JSON.stringify({code:0,data}));
+   };
+   const client=new UuOrders({repository:new HistoryRepository(configFile,null,"uu"),fetcher:fixture,interval:()=>0});
+   await client.start();await client.running;assert.equal(client.job.inserted,2);assert.equal(client.job.status,"completed");
+   const archived=await history.uu();assert.equal(archived.data.accounts["uu:99"].records.length,2);
+   const reloaded=new UuOrders({repository:new HistoryRepository(configFile,null,"uu"),fetcher:fixture,interval:()=>0});await reloaded.ready;await reloaded.start();await reloaded.running;
+   assert.equal(reloaded.job.inserted,0);assert.equal(reloaded.job.updated,0);assert.equal(reloaded.job.skipped,2);assert.deepEqual((await history.uu()).data.accounts["uu:99"].records,archived.data.accounts["uu:99"].records);
+   await assert.rejects(history.saveUu({revision:archived.revision,data:archived.data}),/其他窗口/);
+   assert(archived.data.accounts["uu:99"].records.every(row=>row.goodsId===row.lineId&&!row.templateId));
+   templateId="23";await reloaded.start({mode:"full"});await reloaded.running;
+   assert.equal(reloaded.job.status,"completed");assert.equal(reloaded.job.updated,2);assert.equal(reloaded.job.inserted,0);
+   const upgraded=await new HistoryStore(store.pool).uu(),upgradedRows=upgraded.data.accounts["uu:99"].records;
+   assert.deepEqual(upgradedRows.map(row=>row.key),archived.data.accounts["uu:99"].records.map(row=>row.key));assert(upgradedRows.every(row=>row.goodsId==="23"&&row.templateId==="23"));
+   assert.equal(upgradedRows.reduce((n,row)=>n+row.paidTotalCents,0),203);
+   const conflict=structuredClone(upgraded.data),conflictRows=conflict.accounts["uu:99"].records;
+   conflictRows[0].paidTotalCents=1;conflictRows[0].name="不应保存的中文名称";conflictRows[1].goodsId="24";conflictRows[1].templateId="24";
+   const namesBeforeConflict=await history.names();await assert.rejects(history.saveUu({revision:upgraded.revision,data:conflict}),/物品身份冲突/);
+   assert.deepEqual(await new HistoryStore(store.pool).uu(),upgraded);assert.deepEqual(await history.names(),namesBeforeConflict);
+   const next=await history.uu(),broken=structuredClone(next.data);broken.accounts["uu:99"].records=[];await assert.rejects(history.saveUu({revision:next.revision,data:broken}),/不能移除/);
+   const entry=(await history.names()).items["730:Test Case"];assert.equal(entry.name,"测试武器箱");assert.equal(entry.candidates[0].source,"悠悠 订单");
+   const H=require("../desktop/market-history.js");assert.equal(H.itemName({appid:"730",marketHashName:"Test Case",itemName:"Test Case"},await history.names()).name,"测试武器箱");
+   await store.migrate();assert.equal((await history.uu()).data.accounts["uu:99"].records.length,2);assert.equal((await history.buff()).data.accounts["buff:test"].records.length,1);
+ });
+ await t.test("Steam 固定接口到 PostgreSQL：全量、重启增量、退款更新与原子回滚",async()=>{
+   const {SteamOrders}=require("../desktop/steam-orders.cjs"),F=require("./fixtures/desktop-steam-orders.cjs");
+   const trades=Array.from({length:7},(_,i)=>F.trade(i));let invalid=false;
+   const fetcher=async url=>{const u=new URL(url);if(u.pathname==="/market/")return new Response(F.html());
+     const page=F.page(trades,Number(u.searchParams.get("start")),2);if(invalid&&page.start===2)delete page.purchases[page.events[0].listingid+"_"+page.events[0].purchaseid];return new Response(JSON.stringify(page));};
+   const create=()=>new SteamOrders({repository:new HistoryRepository(path.join(dir,"config.json"),null,"steam"),fetcher,interval:()=>0});
+   const first=create();await first.start();await first.running;assert.equal(first.job.status,"completed");assert.equal(first.job.inserted,7);
+   const persisted=await history.orders("steam");assert.equal(persisted.data.accounts[F.account.id].records.length,7);
+   const next=create();await next.start();await next.running;assert.equal(next.job.status,"completed");assert.equal(next.job.pages,2);assert.equal(next.job.updated,0);assert.equal(next.job.inserted,0);
+   assert.deepEqual((await history.orders("steam")).data.accounts[F.account.id].records,persisted.data.accounts[F.account.id].records);
+   trades[1].purchase.funds_returned=1;await next.start({mode:"full"});await next.running;assert.equal(next.job.updated,1);
+   const refunded=await history.orders("steam"),row=refunded.data.accounts[F.account.id].records.find(r=>r.purchaseId===trades[1].event.purchaseid);assert.equal(row.state,"REFUNDED");assert.equal(row.netTotalCents,null);
+   invalid=true;await next.start({mode:"full"});await next.running;assert.equal(next.job.status,"failed");assert.deepEqual(await history.orders("steam"),refunded);
+   await assert.rejects(history.saveOrders("steam",persisted),/其他窗口/);
+   const broken=structuredClone(refunded.data);broken.accounts[F.account.id].records.pop();await assert.rejects(history.saveOrders("steam",{revision:refunded.revision,data:broken}),/不能移除/);
+   const malformed=structuredClone(refunded.data);malformed.accounts[F.account.id].records[0].paidTotalCents=1.5;await assert.rejects(history.saveOrders("steam",{revision:refunded.revision,data:malformed}),/金额无效/);
+   await store.migrate();assert.equal((await new HistoryStore(store.pool).orders("steam")).data.accounts[F.account.id].records.length,7);
+ });
+ await t.test("炼金库存事件持久化、重启恢复、保留市场记录与防止删除串号",async()=>{
+   const F=require("./fixtures/steam-inventory.cjs"),before=await history.orders("steam"),accountId=Object.keys(before.data.accounts)[0];
+   const e=F.event({accountId,key:`${accountId}:inventory:${"a".repeat(40)}`});
+   const data=structuredClone(before.data);data.accounts[accountId].inventoryHistory=F.archive([e]);
+   await history.saveOrders("steam",{revision:before.revision,data});
+   const saved=await new HistoryStore(store.pool).orders("steam");assert.deepEqual(saved.data.accounts[accountId].inventoryHistory,data.accounts[accountId].inventoryHistory);assert.deepEqual(saved.data.accounts[accountId].records,before.data.accounts[accountId].records);
+   const dropped=structuredClone(saved.data);delete dropped.accounts[accountId].inventoryHistory;
+   await assert.rejects(history.saveOrders("steam",{revision:saved.revision,data:dropped}),/不能移除/);
+   const changed=structuredClone(saved.data);changed.accounts[accountId].inventoryHistory.events[0].items[1].marketHashName="Changed";
+   await assert.rejects(history.saveOrders("steam",{revision:saved.revision,data:changed}),/内容发生变化/);
+   const cross=structuredClone(saved.data);cross.accounts[accountId].inventoryHistory.events[0].accountId="steam:76561198000000002";
+   await assert.rejects(history.saveOrders("steam",{revision:saved.revision,data:cross}),/格式无法核对/);
+   assert.deepEqual(await history.orders("steam"),saved);
+ });
+ assert.equal(Number((await store.pool.query("SELECT count(*) FROM ledger_trades")).rows[0].count),0);assert.equal(Number((await store.pool.query("SELECT count(*) FROM ledger_buy_imports")).rows[0].count),0);assert.equal(Number((await store.pool.query("SELECT count(*) FROM ledger_sale_imports")).rows[0].count),0);
+});

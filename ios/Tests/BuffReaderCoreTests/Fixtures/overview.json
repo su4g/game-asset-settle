@@ -1,0 +1,111 @@
+{
+  "ok": true,
+  "result": {
+    "profile": {
+      "id": "account-1",
+      "name": "账户一",
+      "bindings": {
+        "buff": "buff:one",
+        "uu": null,
+        "steam": null
+      },
+      "recordCount": 2,
+      "collectedAt": "2026-10-27T00:00:00.000Z",
+      "uploadedAt": "2026-10-27T00:00:00.000Z",
+      "state": "synced",
+      "status": {
+        "platforms": {
+          "buff": {
+            "phase": "completed",
+            "message": "已同步"
+          },
+          "uu": {
+            "phase": "login-required",
+            "message": "请重新登录"
+          }
+        }
+      }
+    },
+    "currencies": [
+      {
+        "currencyCode": "CNY",
+        "cashInvestmentCents": 100,
+        "knownCashInvestmentCents": 100,
+        "direct": {
+          "quantity": 1,
+          "proceedsCents": 200,
+          "knownProceedsCents": 200,
+          "costCents": 100,
+          "steamCostCents": 0,
+          "profitCents": 100,
+          "knownProfitCents": 100,
+          "includedQuantity": 1,
+          "pendingQuantity": 0,
+          "firstDate": "2026-01-02",
+          "lastDate": "2026-01-02"
+        },
+        "cashout": {
+          "quantity": 0,
+          "proceedsCents": 0,
+          "knownProceedsCents": 0,
+          "costCents": 0,
+          "steamCostCents": 0,
+          "profitCents": 0,
+          "knownProfitCents": 0,
+          "includedQuantity": 0,
+          "pendingQuantity": 0,
+          "firstDate": "",
+          "lastDate": ""
+        },
+        "profitCents": 100,
+        "knownProfitCents": 100,
+        "pendingQuantity": 0,
+        "holdingQuantity": 0,
+        "netSaleQuantity": 0,
+        "netCashCents": 0,
+        "netSteamCents": 0,
+        "steamSaleQuantity": 0,
+        "coveredKnifeQuantity": 0,
+        "historicalKnifeRatio": null,
+        "cashoutRatio": null
+      }
+    ],
+    "quality": {
+      "unknownAmountCount": 0,
+      "missingTimeCount": 0,
+      "unresolvedNameCount": 0
+    },
+    "sourceStatus": {
+      "buff": {
+        "lastSyncedAt": "2026-10-26T00:00:00.000Z",
+        "recordCount": 2,
+        "accounts": [
+          {
+            "accountId": "buff:one",
+            "recordCount": 2,
+            "lastSyncedAt": "2026-10-26T00:00:00.000Z",
+            "runs": [
+              {
+                "channel": "history",
+                "complete": true,
+                "syncedAt": "2026-10-26T00:00:00.000Z"
+              }
+            ]
+          }
+        ]
+      },
+      "uu": {
+        "lastSyncedAt": null,
+        "recordCount": 0,
+        "accounts": []
+      },
+      "steam": {
+        "lastSyncedAt": null,
+        "recordCount": 0,
+        "accounts": []
+      }
+    },
+    "scopeNote": "总收益 = 直接盈亏 + 提现折扣差收益。持仓、净卖出和未提现余额不计利润。挂刀仅形成余额，不重复记收益。",
+    "method": "confirmed-knife-discount-spread"
+  }
+}

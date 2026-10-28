@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>饰品交易账本</title>
+  <link rel="stylesheet" href="app.css">
+  <link rel="stylesheet" href="design-system.css">
+</head>
+<body>
+  <div id="appLaunch" class="app-launch" aria-hidden="true"><img src="assets/brand/mark.png" alt=""><strong>饰品交易账本</strong><p>把每一笔交易，记清楚。</p></div>
+  <a class="skip-link" href="#mainContent">跳到主要内容</a>
+  <div class="titlebar" aria-hidden="true"></div>
+  <aside class="sidebar">
+    <div class="brand"><img class="brand-mark" src="assets/brand/mark.png" alt=""><div><strong>饰品交易账本</strong><span class="brand-sub">交易有迹 · 收藏有数</span></div></div>
+    <nav aria-label="主要功能">
+      <p class="nav-group-label">账本</p>
+      <button class="nav-item active" data-page="overview" aria-current="page"><span data-icon="overview" aria-hidden="true"></span>总览</button>
+      <button class="nav-item" data-page="ledger"><span data-icon="ledger" aria-hidden="true"></span>交易账本</button>
+      <button class="nav-item" data-page="report"><span data-icon="report" aria-hidden="true"></span>收益报告</button>
+      <button class="nav-item" data-page="alchemy"><span data-icon="alchemy" aria-hidden="true"></span>已完成炼金</button>
+      <p class="nav-group-label">交易来源</p>
+      <button class="nav-item" data-page="orders"><span data-platform-logo="buff" aria-hidden="true"></span>BUFF 订单</button>
+      <button class="nav-item" data-page="uu"><span data-platform-logo="uu" aria-hidden="true"></span>悠悠订单</button>
+      <button class="nav-item" data-page="steam"><span data-platform-logo="steam" aria-hidden="true"></span>Steam 订单</button>
+      <button class="nav-item" data-page="history"><span data-icon="history" aria-hidden="true"></span>CSV 归档</button>
+      <p class="nav-group-label">工具与管理</p>
+      <button class="nav-item" data-page="calculator"><span data-icon="calculator" aria-hidden="true"></span>收益试算</button>
+      <button class="nav-item" data-page="accounts"><span data-icon="accounts" aria-hidden="true"></span>账户与同步</button>
+      <button class="nav-item" data-page="runtime"><span data-icon="runtime" aria-hidden="true"></span>运行状态</button>
+    </nav>
+    <div class="sidebar-bottom"><span class="local-dot"></span><div><strong>本机归档 + 云端查阅</strong><span id="sidebarStatus">正在检查连接</span></div><span class="version">0.16.0</span></div>
+  </aside>
+  <main class="workspace" id="mainContent" tabindex="-1">
+    <header class="topbar"><div class="breadcrumb">本机工作区 <span>/</span> <strong id="pageLabel">总览</strong></div><div class="topbar-right"><button class="button profile-control" data-go="accounts" title="管理账户与同步"><span data-icon="accounts"></span><span id="activeProfileLabel">读取账户</span></button><span id="clock"></span><span class="connection-pill" id="connectionPill" role="status">检查连接中</span></div></header>
+    <div id="appNotice" class="app-notice" role="status" hidden></div>
+    <section id="page-overview" class="page" aria-labelledby="overviewTitle">
+      <div class="page-heading"><div><p class="eyebrow">交易与收藏</p><h1 id="overviewTitle" tabindex="-1">资产总览</h1><p class="description">从已实现收益到剩余持仓，每一笔都有来处。</p></div><button class="button" id="refreshOverview">刷新数据 <span data-icon="refresh" aria-hidden="true"></span></button></div>
+
+      <div id="overviewAccountContext" class="account-context"><p id="overviewAccountStatus">正在读取当前账户与同步状态…</p><button class="text-button" data-go="accounts">管理账户与同步 →</button></div>
+      <div class="ledger-toolbar"><label for="overviewPortfolio">账户组合<select id="overviewPortfolio"><option value="all">全部账户</option></select></label><label for="overviewStart">开始日期<input id="overviewStart" type="date"></label><label for="overviewEnd">结束日期<input id="overviewEnd" type="date"></label><button id="overviewAllDates" class="text-button">全部日期</button><button class="text-button" data-go="report">打开完整收益报告 →</button></div>
+      <div class="metrics" id="overviewMetrics" aria-label="账本概览"><div class="metric placeholder">正在读取本机账本…</div></div>
+      <details id="overviewWallet" class="card report-wallet"></details><div class="analytics-heading"><div><p class="eyebrow">收益与资金</p><h2>交易经营概览</h2></div><button class="text-button" data-go="report">更多维度图表 →</button></div><div id="overviewCharts" class="analytics-dashboard"></div>
+
+      <div class="overview-grid">
+        <article class="card ledger-feature"><div class="section-kicker">订单驱动账本</div><h2>持仓与去向，自动串起来。</h2><p>汇总 BUFF、悠悠和 Steam 订单，按完整名称查看均价、挂刀、提现与剩余持仓。</p><button class="button primary" data-go="ledger">查看持仓与收益 →</button><div class="feature-footer">按当前关联账户汇总平台记录，自动计算平均成本。</div></article>
+        <article class="card quick-card"><div class="section-kicker">数据完整性</div><h2>每个数字都有来源。</h2><p id="overviewQuality">正在检查订单与汇总结果…</p><button class="text-button" data-go="ledger">查看数据质量与统计 →</button><p class="small muted">持仓移除可恢复；原始订单保留。</p></article>
+      </div>
+      <article class="card history-entry"><div><div class="section-kicker">Steam 数据来源</div><h2>登录 Steam，自动更新买卖历史。</h2><p>使用 App 内的独立 Steam 会话，历史保存在本机并汇总到账本。</p></div><button class="button" data-go="steam">管理 Steam 订单 →</button></article>
+      <p class="footnote" id="overviewUpdated">金额单位：人民币 · 缺失估值不会按零计算</p>
+    </section>
+    <section id="page-accounts" class="page" aria-labelledby="accountsTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">终端 · 平台 · 云端</p><h1 id="accountsTitle" tabindex="-1">账户与同步</h1><p class="description">管理当前账户的平台登录、自动同步与手机连接。</p></div></div>
+      <article id="accountCloudCard" class="card account-cloud-card" aria-labelledby="accountCloudTitle">
+        <div class="log-heading"><div><div class="section-kicker">账户与云端</div><h2 id="accountCloudTitle">当前终端关联账户</h2></div><span id="terminalProfileSummary" class="account-cloud-badge">正在读取账户…</span></div>
+        <form id="terminalProfileForm" class="account-cloud-form">
+          <label for="terminalProfile">本机所属账户<select id="terminalProfile" required aria-describedby="terminalProfileHint"><option value="" disabled selected>请选择账户</option></select></label>
+          <button id="terminalProfileApply" class="button" type="submit" disabled>关联此终端</button>
+          <p id="terminalProfileHint" class="small muted">每台终端只采集所选账户的 BUFF、悠悠和 Steam 记录，两组分别核算。</p>
+        </form>
+        <div id="terminalPlatformBindings" class="account-cloud-bindings" aria-label="当前账户的平台关联"></div>
+        <dl class="account-cloud-status"><div><dt>本机自动同步</dt><dd id="terminalSchedule">正在读取…</dd></div><div><dt>云端状态</dt><dd id="terminalCloudStatus">正在读取…</dd></div><div><dt>上次上传</dt><dd id="terminalLastUpload">尚未上传</dd></div></dl>
+        <p id="terminalAccountAttention" class="account-cloud-attention" hidden></p>
+        <div class="price-actions account-cloud-actions"><button id="terminalCloudImport" class="button" type="button" disabled>导入终端连接文件</button><button id="terminalCloudUpload" class="button primary" type="button" disabled>立即上传云端</button><button id="terminalMobileExport" class="button" type="button" disabled>导出手机连接文件</button></div>
+        <p class="small muted">关闭窗口后仍在后台运行，每 6 小时同步一次。退出 App 或电脑休眠时暂停；唤醒后补一次到期同步。手机查看最近一次上传的记录。</p>
+        <details class="account-cloud-settings"><summary>账户名称与已有记录</summary><form id="terminalProfileRenameForm" class="account-cloud-form"><label for="terminalProfileName">当前账户名称<input id="terminalProfileName" maxlength="40" required autocomplete="off" disabled></label><button id="terminalProfileRename" class="button" type="submit" disabled>保存名称</button></form><div class="account-cloud-adopt"><button id="terminalProfileAdopt" class="button" type="button" disabled>将本机已有记录关联当前账户</button><p class="small muted">仅在每个平台都能确定唯一账号时关联；归属冲突时停止，并保留原始档案。</p></div></details>
+        <p id="accountCloudMessage" class="small muted" role="status" aria-live="polite"></p><p id="accountCloudError" class="form-error" role="alert" tabindex="-1" hidden></p>
+      </article>
+      <article class="card startup-card">
+        <div class="log-heading"><div><div class="section-kicker">平台验证与同步</div><h2>登录与历史</h2></div><div class="price-actions"><label class="check-label" for="startupEnabled"><input id="startupEnabled" type="checkbox" checked> 启动及每 6 小时自动同步</label><button id="startupRetry" class="button">校验并同步</button><button id="startupStop" class="button">停止</button></div></div>
+        <p id="startupMessage" role="status">读取启动状态…</p><div id="accountCards" class="account-cards"></div>
+        <p id="overviewRuntime" class="small muted"></p>
+      </article>
+    </section>
+    <section id="page-ledger" class="page" aria-labelledby="orderLedgerTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">BUFF · 悠悠 · Steam</p><h1 id="orderLedgerTitle" tabindex="-1">交易账本</h1><p class="description">按完整物品名与买入来源汇总挂刀、提现、直接盈亏及剩余持仓。</p></div><div class="price-actions"><button id="ledgerAccounts" class="button">账户归属</button><button id="refreshOrderLedger" class="button primary">刷新核算</button></div></div>
+      <p id="orderLedgerError" class="form-error" role="alert" tabindex="-1" hidden></p>
+      <div class="ledger-toolbar"><label for="ledgerPortfolio">账户组合<select id="ledgerPortfolio"><option value="all">全部账户（各组合独立核算）</option></select></label><label for="ledgerSearch">搜索物品<input id="ledgerSearch" type="search" placeholder="完整名称"></label><label for="ledgerStart">开始日期<input id="ledgerStart" type="date"></label><label for="ledgerEnd">结束日期<input id="ledgerEnd" type="date"></label><button id="ledgerAllDates" class="text-button" type="button">全部日期</button><button id="ledgerSettings" class="button">折扣与手续费</button></div>
+      <div class="ledger-toolbar ledger-item-filters">
+        <label for="ledgerGame">游戏<select id="ledgerGame"><option value="all">全部游戏</option></select></label>
+        <label for="ledgerCategory">物品类型<select id="ledgerCategory"><option value="all">全部类型</option></select></label>
+        <label for="ledgerCurrency">币种<select id="ledgerCurrency"><option value="all">全部币种</option></select></label>
+        <label for="ledgerPosition">持仓状态<select id="ledgerPosition"><option value="all">全部状态</option><option value="holding">仍有持仓</option><option value="closed">已清仓</option><option value="gap">存在来源缺口</option></select></label>
+        <label for="ledgerProfitFilter">已实现盈亏<select id="ledgerProfitFilter"><option value="all">全部盈亏</option><option value="profit">盈利</option><option value="loss">亏损</option><option value="flat">持平</option><option value="unknown">成本不全</option></select></label>
+        <label for="ledgerGapFilter">缺口原因<select id="ledgerGapFilter"><option value="all">全部原因</option><option value="no_buy">无同名买入</option><option value="later_buy">买入晚于卖出</option><option value="exhausted">此前买入不足</option><option value="mapping_candidate">名称映射候选</option></select></label>
+        <label for="ledgerSort">排序字段<select id="ledgerSort"><option value="name">物品名称</option></select></label>
+        <button id="ledgerSortDirection" type="button" class="button" aria-label="当前升序，切换为降序">升序 ↑</button>
+        <button class="text-button" data-go="report">核对缺失买卖价格 →</button>
+      </div>
+      <p id="ledgerOverviewSummary" class="small muted"></p><div id="orderLedgerMetrics" class="metrics"></div><details id="ledgerWallet" class="card report-wallet"></details><p id="ledgerDataQuality" class="small muted" role="status"></p>
+      <details class="ledger-charts-disclosure"><summary>展开收益、成本与交易数量报表</summary><div id="ledgerCharts" class="analytics-dashboard"></div></details>
+      <details class="ledger-charts-disclosure"><summary>三平台 7 天成交均价</summary><article class="card"><h2>三平台 7 天成交走势</h2><div class="ledger-toolbar"><label for="trendItem">物品<select id="trendItem"><option value="">暂无物品</option></select></label><label for="trendDirection">方向<select id="trendDirection"><option value="buy">买入实付</option><option value="sell">卖出净到账</option></select></label></div><p class="small muted">本人订单加权均价，并非市场行情。缺失日期断开显示。</p><div id="orderTrendChart"></div></article></details>
+      <div class="ledger-tabs" aria-label="账本列表"><button data-ledger-view="all" aria-pressed="false">物品总览</button><button data-ledger-view="holdings" aria-pressed="true">持仓（不计收益）</button><button data-ledger-view="watchlist" aria-pressed="false">我的自选</button><button data-ledger-view="categories" aria-pressed="false">类目汇总</button><button data-ledger-view="net" aria-pressed="false">净卖出（不计收益）</button><button data-ledger-view="gaps" aria-pressed="false">来源缺口</button><button data-ledger-view="knife" aria-pressed="false">挂刀记录</button><button data-ledger-view="cashout" aria-pressed="false">提现记录</button><button data-ledger-view="direct" aria-pressed="false">直接盈亏</button><button data-ledger-view="excluded" aria-pressed="false">已移除持仓</button></div>
+      <p id="ledgerFilterSummary" class="small muted" role="status"></p>
+      <p id="ledgerSortStatus" class="small muted" role="status"></p>
+      <div class="card quote-card"><p id="ledgerListDescription" class="small muted ledger-list-description"></p><div class="quote-table-wrap" tabindex="0" role="region" aria-label="可横向滚动的交易账本"><table class="quote-table"><caption id="ledgerListCount">正在读取订单</caption><thead id="orderLedgerHead"></thead><tbody id="orderLedgerRows"></tbody></table></div><div class="ledger-pager"><button id="ledgerPrevious" class="button">上一页</button><span id="ledgerPageInfo"></span><button id="ledgerNext" class="button">下一页</button></div></div>
+      <details class="ledger-rules"><summary>核算规则与旧手工账本</summary><p>同一账户组合按完整物品名、游戏和币种汇总，现金平台与 Steam 买入分别保留平均成本，按自然日核算。Steam 卖出优先从现金买入池计挂刀；BUFF / 悠悠卖出优先从 Steam 买入池计提现，剩余按直接转卖核算，Steam 原路回卖余额在日末入账。已实现收益与收益报告共用口径：直接盈亏加提现折扣差收益，提现成本采用同账户组合同币种截至结束日的历史加权挂刀折扣。持仓、净卖出和余额不计利润。价格核对记录同步到工作台、账本与报告，保留原始档案。日期筛选保留期初持仓成本；移出按名称组排除剩余持仓，可恢复且不删除历史。</p><button id="openLegacyLedger" class="button">查看旧手工账本</button><div id="legacyLedger" hidden><p class="small muted">旧记录独立保留，不与订单驱动账本相加。</p><iframe id="ledgerFrame" title="旧手工 PostgreSQL 账本"></iframe></div></details>
+    </section>
+    <section id="page-report" class="page report-page" aria-labelledby="profitReportTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">按名称与均价核算</p><h1 id="profitReportTitle" tabindex="-1">收益报告</h1><p class="description">直接盈亏与提现折扣差计收益，持仓和净卖出单独查看。</p></div><div class="price-actions"><button id="reportJumpDetails" class="button">查看明细 ↓</button><button id="reportRefresh" class="button primary">刷新报告</button></div></div>
+      <p id="reportError" class="form-error" role="alert" tabindex="-1" hidden></p>
+      <div class="card history-filter-card"><div class="history-fields">
+        <label for="reportPortfolio">账户组合<select id="reportPortfolio"><option value="all">全部账户</option></select></label>
+        <label for="reportStart">开始日期<input id="reportStart" type="date"></label><label for="reportEnd">结束日期<input id="reportEnd" type="date"></label>
+        <label for="reportGame">游戏<select id="reportGame"><option value="all">全部游戏</option></select></label>
+        <label for="reportCategory">物品类型<select id="reportCategory"><option value="all">全部类型</option></select></label>
+        <label for="reportCurrency">币种<select id="reportCurrency"><option value="all">全部币种</option></select></label>
+      </div><div class="history-search-row"><label for="reportSearch">搜索物品<input id="reportSearch" type="search" placeholder="中文名称或完整市场名"></label>
+        <label for="reportProfit">收益筛选<select id="reportProfit"><option value="all">全部收益</option><option value="positive">盈利</option><option value="negative">亏损</option><option value="zero">盈亏为零</option><option value="unknown">缺少价格或折扣样本</option></select></label>
+        <button id="reportReset" class="text-button">清除筛选</button></div>
+      </div>
+      <div id="reportMetrics" class="metrics"></div><details id="reportWallet" class="card report-wallet"></details>
+      <details class="ledger-charts-disclosure" open><summary>多维度收益图表</summary><div id="reportCharts" class="analytics-dashboard"></div></details>
+      <details class="card report-rules"><summary>收益口径与折扣来源</summary><p id="reportFormula"></p><p>BUFF / 悠悠卖出优先消耗同名 Steam 买入数量计提现；其余消耗现金买入数量计直接盈亏。Steam 卖出优先消耗现金买入数量计挂刀，其余列为 Steam 净卖出。按自然日、完整名称和来源池均价计算，不逐件配对。</p><p>总成本只统计 BUFF / 悠悠买入。持仓显示现金买入成本和 Steam 买入面值，均不计利润。挂刀形成余额时不重复记收益；净卖出不按零成本计利润。提现折扣差使用截至结束日的完整挂刀样本，搜索与开始日期不改变样本。</p><p>历史价格缺项保留为空。核对买卖价格只补充本机报表，工作台与交易账本同步更新，需填写实际成交日期、数量和实付 / 净到账均价，可撤回；不执行平台交易。</p></details>
+      <div class="ledger-tabs" aria-label="收益报告列表">
+        <button data-report-view="profit" aria-pressed="true">收益明细</button><button data-report-view="knife" aria-pressed="false">挂刀 / Steam 卖出</button>
+        <button data-report-view="holdings" aria-pressed="false">持仓（不计收益）</button><button data-report-view="net" aria-pressed="false">净卖出（不计收益）</button><button data-report-view="entries" aria-pressed="false">价格核对记录</button>
+      </div>
+      <p id="reportListNote" class="small muted" role="status"></p>
+      <div class="card report-table-controls">
+        <label for="reportListFilter">筛选当前列表<select id="reportListFilter"></select></label>
+        <label for="reportSort">排序字段<select id="reportSort"></select></label>
+        <button id="reportSortDirection" class="button" type="button">降序 ↓</button>
+        <button id="reportTableReset" class="text-button" type="button">重置列表</button>
+        <p id="reportTableStatus" class="small muted" role="status"></p>
+      </div>
+      <div class="card quote-card"><div class="quote-table-wrap" tabindex="0" role="region" aria-label="可横向滚动的收益报告"><table class="quote-table report-table"><caption id="reportCaption">正在读取报告</caption><thead id="reportHead"></thead><tbody id="reportRows"></tbody></table></div><div class="ledger-pager"><button id="reportPrevious" class="button">上一页</button><span id="reportPageInfo"></span><button id="reportNext" class="button">下一页</button></div></div>
+    </section>
+    <section id="page-orders" class="page" aria-labelledby="buffTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">BUFF 订单与交易历史</p><div class="page-title-with-logo"><span data-platform-logo="buff" aria-hidden="true"></span><h1 id="buffTitle" tabindex="-1">BUFF 订单</h1></div><p class="description">查询待发货，读取买入与卖出历史，再核对实际收支。</p></div><span class="tag">CS2 / Dota 2</span></div>
+      <div class="card buff-connection"><div><strong id="buffAccount">尚未连接 BUFF</strong><p id="buffConnection">在 App 内登录后开始同步</p></div><div class="price-actions"><button class="button" id="buffLogin">登录 / 切换账号</button><button class="button" id="buffCheck">检查登录</button><button class="text-button" id="buffLogout">退出 BUFF</button></div></div>
+      <div class="card buff-controls"><div class="price-filters">
+        <label for="buffGame">游戏<select id="buffGame"><option value="730">CS2</option><option value="570">Dota 2</option><option value="all">全部游戏</option></select></label>
+        <label for="buffView">订单范围<select id="buffView"><option value="all">全部买卖历史</option><option value="buy">买入历史</option><option value="sell">卖出历史</option><option value="pending">待发货</option></select></label>
+        <label for="buffSyncMode">同步方式<select id="buffSyncMode"><option value="incremental">增量同步（首次读到末页）</option><option value="full">完整复核 / 补齐旧历史</option></select></label>
+        <label for="buffQuery">查询本机订单<input id="buffQuery" type="search" maxlength="100" placeholder="订单号、商品 ID 或名称"></label>
+      </div><div class="buff-toolbar"><div class="price-actions"><button class="button primary" id="buffSync">同步交易历史</button><button class="button" id="buffPending">查询待发货</button><button class="button" id="buffStop" disabled>停止同步</button></div><span id="buffProgress" class="small muted"></span></div>
+        <p id="buffJob" role="status" aria-live="polite">尚未开始同步。</p><p id="buffCoverage" class="small muted"></p>
+      </div>
+      <div class="card history-filter-card"><div class="history-date-presets"><strong>时间范围</strong><button type="button" class="text-button" data-buff-range="month">本月</button><button type="button" class="text-button" data-buff-range="previous">上月</button><button type="button" class="text-button" data-buff-range="all">全部日期</button></div><div class="history-fields">
+        <label for="buffStart">开始日期<input id="buffStart" type="date"></label><label for="buffEnd">结束日期（含当天）<input id="buffEnd" type="date"></label>
+        <label for="buffDateField">时间依据<select id="buffDateField"><option value="trade">成交时间</option><option value="created">创建时间</option></select></label>
+        <label for="buffCategory">物品分类<select id="buffCategory"><option value="all">全部分类</option></select></label>
+        <label for="buffStatus">订单状态<select id="buffStatus"><option value="all">全部状态</option><option value="completed">已完成</option><option value="open">进行中 / 未知状态</option><option value="closed">已取消 / 退款</option></select></label>
+        <label for="buffSort">汇总排序<select id="buffSort"><option value="date">成交日期：新到旧</option><option value="total">成交总额：高到低</option><option value="quantity">数量：多到少</option><option value="average">均价：高到低</option></select></label>
+      </div></div><div id="buffMetrics" class="metrics" aria-label="订单统计"></div><p id="buffAmounts" class="small muted"></p>
+      <p id="buffMessage" class="price-message" role="status" aria-live="polite" hidden></p>
+      <div class="card quote-card" id="buffResults" aria-busy="false"><div class="history-toolbar"><div class="history-views" aria-label="订单视图"><button id="buffSummaryView" type="button" aria-pressed="false">同类汇总</button><button id="buffDetailView" type="button" aria-pressed="true">逐笔订单</button></div><button class="text-button" id="buffBack" hidden>返回全部汇总</button></div><details id="buffLegacyReview" class="ledger-rules"><summary>旧手工账本录入</summary><div class="buff-toolbar buff-review"><span class="small muted">仅用于旧手工账本。新交易账本已自动汇总，无需在此确认。选择单个游戏可继续旧流程。</span><div class="price-actions"><button id="buffReviewBuys" class="button" disabled>核对本页买入</button><button id="buffReviewSales" class="button" disabled>核对本页卖出</button></div></div></details>
+        <div class="quote-table-wrap" tabindex="0" role="region" aria-label="BUFF 订单明细"><table class="quote-table buff-table"><caption class="visually-hidden">BUFF 本机订单，金额单位人民币</caption><thead id="buffTableHead"><tr><th scope="col">物品</th><th scope="col">订单号 / 方向</th><th scope="col">数量</th><th scope="col">成交与实际收支</th><th scope="col">成交 / 采集时间</th><th scope="col">平台状态</th></tr></thead><tbody id="buffRows"></tbody></table></div>
+        <div id="buffEmpty" class="price-empty"><h2>当前范围还没有订单</h2><p>登录后同步历史，或调整游戏与订单查询条件。</p></div>
+        <div class="history-pagination"><span id="buffPageInfo"></span><div><button class="button" id="buffPrevious" disabled>上一页</button><button class="button" id="buffNext" disabled>下一页</button></div></div>
+      </div>
+      <p class="history-note">登录状态由 App 独立保存。同步只读取平台订单，新交易账本自动汇总。成交总额与实际收支分别展示；平台未提供的实付、净到账、数量或时间保留为空，不以零值代替。时间按北京时间显示。汇总均价仅计算已完成且金额、数量明确的订单，按总金额 ÷ 总数量加权；进行中、取消与退款不计入成交均价。不同游戏、完整市场名、币种和买卖方向分组。</p>
+    </section>
+    <section id="page-uu" class="page" aria-labelledby="uuTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">悠悠 订单与交易历史</p><div class="page-title-with-logo"><span data-platform-logo="uu" aria-hidden="true"></span><h1 id="uuTitle" tabindex="-1">悠悠订单</h1></div><p class="description">先同步已完成买入；验证卖出接口后可同步卖出历史。</p></div><span class="tag">CS2</span></div>
+      <div class="card buff-connection"><div><strong id="uuAccount">尚未连接 悠悠</strong><p id="uuConnection">在 App 内登录后开始同步</p></div><div class="price-actions"><button class="button" id="uuLogin">登录 / 切换账号</button><button class="button" id="uuCheck">检查登录</button><button class="text-button" id="uuLogout">退出 悠悠</button></div></div>
+      <div class="card buff-controls"><div class="price-filters">
+        <label for="uuGame">游戏<select id="uuGame"><option value="730">CS2</option></select></label>
+        <label for="uuView">订单范围<select id="uuView"><option value="buy">已完成买入</option><option value="sell">已完成卖出（需验证）</option></select></label>
+        <label for="uuSyncMode">同步方式<select id="uuSyncMode"><option value="incremental">增量同步（首次读到末页）</option><option value="full">完整复核 / 补齐旧历史</option></select></label>
+        <label for="uuQuery">查询本机订单<input id="uuQuery" type="search" maxlength="100" placeholder="订单号、商品 ID 或名称"></label>
+      </div><div class="buff-toolbar"><div class="price-actions"><button class="button primary" id="uuSync">同步交易历史</button><button class="button" id="uuProbeSell">验证卖出接口</button><button class="button" id="uuStop" disabled>停止同步</button></div><span id="uuProgress" class="small muted"></span></div>
+        <p id="uuSellProbe" class="small muted" role="status">卖出历史待验证</p><p id="uuJob" role="status" aria-live="polite">尚未开始同步。</p><p id="uuCoverage" class="small muted"></p>
+      </div>
+      <div class="card history-filter-card"><div class="history-date-presets"><strong>时间范围</strong><button type="button" class="text-button" data-uu-range="month">本月</button><button type="button" class="text-button" data-uu-range="previous">上月</button><button type="button" class="text-button" data-uu-range="all">全部日期</button></div><div class="history-fields">
+        <label for="uuStart">开始日期<input id="uuStart" type="date"></label><label for="uuEnd">结束日期（含当天）<input id="uuEnd" type="date"></label>
+        <label for="uuDateField">时间依据<select id="uuDateField"><option value="trade">成交时间</option><option value="created">创建时间</option></select></label>
+        <label for="uuCategory">物品分类<select id="uuCategory"><option value="all">全部分类</option></select></label>
+        <label for="uuStatus">订单状态<select id="uuStatus"><option value="completed">已完成</option></select></label>
+        <label for="uuSort">汇总排序<select id="uuSort"><option value="date">成交日期：新到旧</option><option value="total">成交总额：高到低</option><option value="quantity">数量：多到少</option><option value="average">均价：高到低</option></select></label>
+      </div></div><div id="uuMetrics" class="metrics" aria-label="订单统计"></div><p id="uuAmounts" class="small muted"></p>
+      <p id="uuMessage" class="price-message" role="status" aria-live="polite" hidden></p>
+      <div class="card quote-card" id="uuResults" aria-busy="false"><div class="history-toolbar"><div class="history-views" aria-label="订单视图"><button id="uuSummaryView" type="button" aria-pressed="false">同类汇总</button><button id="uuDetailView" type="button" aria-pressed="true">逐笔订单</button></div><button class="text-button" id="uuBack" hidden>返回全部汇总</button></div>        <div class="quote-table-wrap" tabindex="0" role="region" aria-label="悠悠 订单明细"><table class="quote-table buff-table"><caption class="visually-hidden">悠悠 本机订单，金额单位人民币</caption><thead id="uuTableHead"><tr><th scope="col">物品</th><th scope="col">订单号 / 方向</th><th scope="col">数量</th><th scope="col">成交与实际收支</th><th scope="col">成交 / 采集时间</th><th scope="col">平台状态</th></tr></thead><tbody id="uuRows"></tbody></table></div>
+        <div id="uuEmpty" class="price-empty"><h2>当前范围还没有订单</h2><p>登录后同步历史，或调整游戏与订单查询条件。</p></div>
+        <div class="history-pagination"><span id="uuPageInfo"></span><div><button class="button" id="uuPrevious" disabled>上一页</button><button class="button" id="uuNext" disabled>下一页</button></div></div>
+      </div>
+      <p class="history-note">同步已完成的 CS2 买卖历史，按账号、订单及物品去重并保留原始时间。成交金额与实付 / 净到账分别记录；平台未提供实际金额时保留为空，不以零值代替。均价按成交总额 ÷ 总数量加权，时间为北京时间。同一物品按买入、卖出分别汇总。完整英文名相同的中文别名归入同类；缺英文名时仅用游戏内唯一的精确中文对应，一个中文名对应多个英文名仍待核对。未匹配的英文名可在 CSV 归档页的“中英文名称映射”补充。卖出验证只读取样本，不写入成交历史。</p>
+    </section>
+    <section id="page-steam" class="page" aria-labelledby="steamTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">Steam 社区市场</p><div class="page-title-with-logo"><span data-platform-logo="steam" aria-hidden="true"></span><h1 id="steamTitle" tabindex="-1">Steam 订单</h1></div><p class="description">独立登录后同步买卖历史，实际收支自动汇总到账本。</p></div><span class="tag">全部市场游戏</span></div>
+      <div class="card buff-connection"><div><strong id="steamAccount">尚未连接 Steam</strong><p id="steamConnection">在 App 内登录后开始同步</p></div><div class="price-actions"><button class="button" id="steamLogin">登录 / 切换账号</button><button class="button" id="steamCheck">检查登录</button><button class="text-button" id="steamLogout">退出 Steam</button></div></div>
+      <div class="card buff-controls"><div class="price-filters">
+        <label for="steamGame">游戏<select id="steamGame"><option value="all">全部游戏</option><option value="730">CS2</option><option value="570">Dota 2</option></select></label>
+        <label for="steamView">订单范围<select id="steamView"><option value="all">买入与卖出</option><option value="buy">买入</option><option value="sell">卖出</option></select></label>
+        <label for="steamSyncMode">同步方式<select id="steamSyncMode"><option value="incremental">增量同步（首次读到末页）</option><option value="full">完整复核 / 补齐旧历史</option></select></label>
+        <label for="steamQuery">查询本机订单<input id="steamQuery" type="search" maxlength="100" placeholder="订单号、商品 ID 或名称"></label>
+      </div><div class="buff-toolbar"><div class="price-actions"><button class="button primary" id="steamSync">同步交易历史</button><button class="button" id="steamStop" disabled>停止同步</button></div><span id="steamProgress" class="small muted"></span></div>
+        <progress id="steamSyncProgress" aria-label="Steam 历史同步进度" hidden></progress><p id="steamJob" role="status" aria-live="polite">尚未开始同步。</p><p id="steamCoverage" class="small muted"></p>
+      </div>
+      <div class="card history-filter-card"><div class="history-date-presets"><strong>时间范围</strong><button type="button" class="text-button" data-steam-range="month">本月</button><button type="button" class="text-button" data-steam-range="previous">上月</button><button type="button" class="text-button" data-steam-range="all">全部日期</button></div><div class="history-fields">
+        <label for="steamStart">开始日期<input id="steamStart" type="date"></label><label for="steamEnd">结束日期（含当天）<input id="steamEnd" type="date"></label>
+        <label for="steamDateField">时间依据<select id="steamDateField"><option value="trade">成交时间</option></select></label>
+        <label for="steamCategory">物品分类<select id="steamCategory"><option value="all">全部分类</option></select></label>
+        <label for="steamStatus">订单状态<select id="steamStatus"><option value="all">全部状态</option><option value="completed">已成交</option><option value="open">待处理 / 失败 / 状态未知</option><option value="closed">已退款</option></select></label>
+        <label for="steamSort">汇总排序<select id="steamSort"><option value="date">成交日期：新到旧</option><option value="total">成交总额：高到低</option><option value="quantity">数量：多到少</option><option value="average">均价：高到低</option></select></label>
+      </div></div><div id="steamMetrics" class="metrics" aria-label="订单统计"></div><p id="steamAmounts" class="small muted"></p>
+      <p id="steamMessage" class="price-message" role="status" aria-live="polite" hidden></p>
+      <div class="card quote-card" id="steamResults" role="region" aria-label="已保存的 Steam 订单" aria-busy="false"><div class="history-toolbar"><div class="history-views" aria-label="订单视图"><button id="steamSummaryView" type="button" aria-pressed="false">同类汇总</button><button id="steamDetailView" type="button" aria-pressed="true">逐笔订单</button></div><button class="text-button" id="steamBack" hidden>返回全部汇总</button></div>        <div class="quote-table-wrap" tabindex="0" role="region" aria-label="Steam 订单明细"><table class="quote-table buff-table"><caption class="visually-hidden">Steam 本机订单，币种分别统计</caption><thead id="steamTableHead"><tr><th scope="col">物品</th><th scope="col">订单号 / 方向</th><th scope="col">数量</th><th scope="col">成交与实际收支</th><th scope="col">成交 / 资金状态</th><th scope="col">平台状态</th></tr></thead><tbody id="steamRows"></tbody></table></div>
+        <div id="steamEmpty" class="price-empty"><h2>当前范围还没有订单</h2><p>登录后同步历史，或调整游戏与订单查询条件。</p></div>
+        <div class="history-pagination"><span id="steamPageInfo"></span><div><button class="button" id="steamPrevious" disabled>上一页</button><button class="button" id="steamNext" disabled>下一页</button></div></div>
+      </div>
+      <p class="history-note">同步本人 Steam 市场买卖历史，首次读取至末页，重复同步按成交标识去重。买入采用含费实付，卖出采用本人币种的净额；暂扣款项单独标注，解冻预计时间不作为实际到账时间。失败、退款和回滚记录保留，未确认状态不计完成交易。历史自动汇总到账本，已完整核对的 CSV 重复来源只计算一次。</p>
+    </section>
+    <section id="page-alchemy" class="page history-page alchemy-page" aria-labelledby="alchemyTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">CS2 · 库存历史复盘</p><h1 id="alchemyTitle" tabindex="-1">已完成炼金</h1><p class="description">还原每次真实合成的材料与产出，追踪购买成本和出售结果。</p></div><span class="tag">已发生的合成</span></div>
+      <article class="card alchemy-sync">
+        <div class="log-heading"><div><div class="section-kicker">当前账户 · Steam 库存历史</div><h2>从真实合成开始</h2></div><div class="price-actions"><label for="alchemyMode" class="small">读取范围 <select id="alchemyMode"><option value="incremental">增量 / 继续历史</option><option value="full">完整复核</option></select></label><button id="alchemySync" class="button primary">同步库存历史</button><button id="alchemyStop" class="button" disabled>停止</button><button class="text-button" data-go="steam">Steam 登录与订单 →</button></div></div>
+        <p id="alchemySyncStatus" role="status" aria-live="polite">正在读取本机档案…</p><progress id="alchemyProgress" aria-label="库存历史同步进度" hidden></progress><p id="alchemyCoverage" class="small muted"></p>
+      </article>
+      <p id="alchemyError" class="form-error" role="alert" tabindex="-1" hidden></p>
+      <form id="alchemyFilters" class="ledger-toolbar"><label for="alchemyFrom">合成开始日期<input id="alchemyFrom" type="date"></label><label for="alchemyTo">合成结束日期<input id="alchemyTo" type="date"></label><label for="alchemySearch">材料或产出<input id="alchemySearch" type="search" placeholder="完整名称或关键词"></label><button class="button" type="submit">查询</button><button id="alchemyReset" class="text-button" type="button">全部日期</button></form>
+      <div id="alchemyMetrics" class="metrics" aria-label="已完成炼金统计"></div>
+      <div class="card quote-card"><div class="quote-table-wrap" tabindex="0" role="region" aria-label="可横向滚动的炼金记录"><table class="quote-table history-table alchemy-table"><caption>按合成日期筛选 · 出售状态与收益截至当前订单档案 · 北京时间</caption><thead><tr><th scope="col">合成时间 / 实际产出</th><th scope="col">材料成本</th><th scope="col">产出去向</th><th scope="col">实际收益</th><th scope="col">配方与依据</th></tr></thead><tbody id="alchemyRows"></tbody></table></div>
+        <div id="alchemyEmpty" class="price-empty" hidden><h2>当前范围还没有已完成炼金</h2><p>同步 Steam 库存历史后，这里会显示真实合成事件。</p></div><div class="history-pagination"><span id="alchemyPageInfo"></span><div><button id="alchemyPrevious" class="button" disabled>上一页</button><button id="alchemyNext" class="button" disabled>下一页</button></div></div>
+      </div>
+      <details class="card alchemy-policy"><summary>成本、收益与数据完整性</summary><p>配方来自 Steam 同一条 Crafted 事件的投入与产出。成本使用合成发生前、同账户组合、同币种和完整名称的购买平均成本；再次炼金时结转材料成本。库存历史至少需连续覆盖材料买入至合成的时间段；缺少订单、时间先后不明或同名产出无法区分时保留待核对。</p><p>现金收益＝已确认现金净卖出－可追溯现金成本。Steam 余额盈亏仅用于纯 Steam 余额投入并在 Steam 出售的结果；余额来源现金成本不明时不会用固定折扣估算。未售出、再次投入与暂扣未到账的产出不计已实现收益。</p><p>本页是独立的炼金复盘，不能与交易收益报告相加。现有交易账本按买卖订单汇总，尚未扣除炼金消耗的材料。库存接口可能遗漏旧事件；“已读至平台末页”表示读取范围，不保证平台记录完整。原始订单和已发生的交易统计均保留。</p></details>
+    </section>
+    <section id="page-history" class="page history-page" aria-labelledby="historyTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">CSV 导入 · Steam 买卖历史</p><h1 id="historyTitle" tabindex="-1">CSV 归档</h1><p class="description">通过 CSV 导入 Steam 买入与卖出记录，查看同类汇总、逐笔订单和成交均价。</p></div><span class="tag">历史入库 · 增量导入</span></div>
+      <div class="card history-upload">
+        <div><label for="historyFile" class="history-upload-label">导入 Steam 订单 CSV</label><p id="historyFileHelp">Steam 标准清单自动识别，其他列名可设置对应关系；没有来源列时默认为 Steam。最多 20 MB / 100,000 条，重复或重叠订单增量入库。不同 Steam 账户请使用不同标记。</p><label for="historyImportScope">导入账户标记<input id="historyImportScope" type="text" maxlength="100" value="默认账户" required></label><input id="historyFile" name="historyFile" type="file" accept=".csv,text/csv" aria-describedby="historyFileHelp"></div>
+        <div class="history-file-info"><strong id="historyFileName">尚未选择文件</strong><span id="historyFileInfo">Steam 买入与卖出记录，支持日期、游戏与账户筛选</span><button id="historyReload" class="button" type="button">读取 Steam 订单</button><button id="historyNames" class="button" type="button">中英文名称映射</button><button id="historyClear" class="text-button" type="button" disabled>清空当前视图</button></div>
+      </div>
+      <p id="historyError" class="form-error" role="alert" tabindex="-1" hidden></p>
+      <p id="historyMessage" class="price-message" role="status" hidden></p>
+      <form id="historyFilters" class="card history-filter-card" action="#" method="post">
+        <div class="history-date-presets"><strong>成交日期</strong><button type="button" class="text-button" data-history-range="month">本月</button><button type="button" class="text-button" data-history-range="previous">上月</button><button type="button" class="text-button" data-history-range="latest">订单最新月份</button><button type="button" class="text-button" data-history-range="all">全部日期</button></div>
+        <div class="history-fields">
+          <label for="historyStart">开始日期<input id="historyStart" name="start" type="date"></label>
+          <label for="historyEnd">结束日期（含当天）<input id="historyEnd" name="end" type="date"></label>
+          <label for="historyGame">游戏<select id="historyGame" name="game"><option value="all">全部游戏</option><option value="730">CS2</option><option value="570">Dota 2</option><option value="other">其他游戏</option></select></label>
+          <label for="historyPlatform">来源平台<select id="historyPlatform" name="platform" disabled><option value="steam" selected>Steam</option></select></label>
+          <label for="historyType">交易类型<select id="historyType" name="type"><option value="all">购买与出售</option><option value="purchase">购买</option><option value="sale">出售</option></select></label>
+          <label for="historyAccount">账户标记<select id="historyAccount"><option value="all">全部账户</option></select></label><label for="historyCurrency">币种<select id="historyCurrency" name="currency"><option value="all">全部币种</option></select></label>
+        </div>
+        <div class="history-search-row"><label for="historySearch">搜索物品<input id="historySearch" name="search" type="search" placeholder="中文名称或英文市场名" spellcheck="false" autocapitalize="off" autocorrect="off"></label><label for="historySort">排序<select id="historySort" name="sort"><option value="total">总金额：高到低</option><option value="quantity">数量：多到少</option><option value="average">均价：高到低</option><option value="date">成交日期：新到旧</option><option value="name">中文名称</option></select></label><label class="history-inline-check"><input id="historyUnverified" name="unverified" type="checkbox">只看名称待核对</label><button class="button" type="submit">应用筛选</button></div>
+      </form>
+      <div class="metrics" id="historyMetrics" aria-label="筛选结果概览"></div>
+      <p id="historyAmounts" class="small muted" hidden></p>
+      <div class="card quote-card">
+        <div class="history-toolbar"><div class="history-views" aria-label="结果视图"><button id="historySummaryView" type="button" aria-pressed="true">同类汇总</button><button id="historyDetailView" type="button" aria-pressed="false">逐笔订单</button></div><div class="price-actions"><button id="historyExportSummary" class="button" type="button" disabled>导出汇总 CSV</button><button id="historyExportDetails" class="button" type="button" disabled>导出订单 CSV</button></div></div>
+        <div id="historyDrill" class="history-drill" hidden><span id="historyDrillName"></span><button id="historyBack" class="text-button" type="button">返回全部汇总</button></div>
+        <div class="quote-table-wrap" tabindex="0" role="region" aria-label="可横向滚动的 Steam 订单表"><table class="quote-table history-table"><caption id="historyCaption">导入 CSV 后显示 Steam 订单</caption><thead id="historyTableHead"></thead><tbody id="historyRows"></tbody></table></div>
+        <div id="historyEmpty" class="price-empty"><h2>导入 Steam 订单</h2><p>上传 Steam 买入与卖出 CSV，查看同类汇总、逐笔订单和成交均价。</p></div>
+        <div class="history-pagination" id="historyPagination" hidden><span id="historyPageInfo"></span><div><button id="historyPrevious" class="button" type="button">上一页</button><button id="historyNext" class="button" type="button">下一页</button></div></div>
+      </div>
+      <p id="historyNameCoverage" class="history-note"></p>
+      <p class="history-note">本页只展示 Steam 订单；BUFF、悠悠与其他来源独立保留。均价＝总金额 ÷ 数量，按账户、游戏、完整市场名、币种及买卖方向分别汇总，显示时四舍五入至两位小数。购买与出售不相抵；金额沿用 CSV 原值，实际成本与收益由交易账本核算。</p>
+      <p class="history-note">CSV、BUFF / 悠悠历史和中英文名称映射保存在本机数据库，重启后恢复。BUFF、悠悠与 CSV 提供的完整中英文名称自动补入映射，冲突需手动核对，手动值优先。导入历史不创建交易账本记录。没有订单号的 CSV 按完整交易内容与重复次数去重；若两笔交易所有字段完全相同，请在 CSV 补充订单号以准确区分。</p>
+    </section>
+    <section id="page-calculator" class="page" aria-labelledby="calculatorTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">按真实手续费计算</p><h1 id="calculatorTitle" tabindex="-1">收益试算</h1><p class="description">手动输入报价，仅用于核算，不写入行情和购买记录。</p></div><span class="tag">离线可用</span></div>
+      <div class="calculator-grid">
+        <form id="calculatorForm" class="card form-card">
+          <h2>输入报价</h2>
+          <label for="game">游戏<select id="game"><option value="730">CS2</option><option value="570">Dota 2</option></select></label>
+          <label for="buffPrice">BUFF 在售价<span class="input-wrap"><span>¥</span><input id="buffPrice" type="text" inputmode="decimal" placeholder="0.00" required pattern="(?:0|[1-9][0-9]*)(?:\.[0-9]{1,2})?"></span></label>
+          <label for="steamPrice">Steam 含费买价<span class="input-wrap"><span>¥</span><input id="steamPrice" type="text" inputmode="decimal" placeholder="0.00" required pattern="(?:0|[1-9][0-9]*)(?:\.[0-9]{1,2})?"></span></label>
+          <label for="buffBuyPrice">BUFF 最高不限求购价（选填）<span class="input-wrap"><span>¥</span><input id="buffBuyPrice" type="text" inputmode="decimal" placeholder="0.00" pattern="(?:0|[1-9][0-9]*)(?:\.[0-9]{1,2})?"></span></label>
+          <label for="buffFee">BUFF 出售手续费<span class="input-wrap"><input id="buffFee" type="number" min="0" max="100" step="0.01" value="2.5" required><span>%</span></span></label>
+          <p id="calculatorError" class="form-error" role="alert" hidden></p>
+          <div class="form-actions"><button type="submit" class="button primary">计算折扣 <span aria-hidden="true">→</span></button><button type="button" class="text-button" id="exampleButton">填入示例</button></div>
+        </form>
+        <div class="calculator-result card" id="calculatorResult" aria-live="polite"><div class="empty-state"><span class="empty-symbol" data-icon="percent" aria-hidden="true"></span><h2>从一组报价开始</h2><p>填入 BUFF 与 Steam 价格，<br>查看手续费和两种折扣。</p></div></div>
+      </div>
+      <div class="scope-note"><span class="note-icon" data-icon="info" aria-hidden="true"></span><p>Steam 手续费按最低费用与分位取整反推。挂刀折扣越低越好，提现折扣越高越好；试算使用你输入的报价。</p></div>
+    </section>
+    <section id="page-runtime" class="page" aria-labelledby="runtimeTitle" hidden>
+      <div class="page-heading"><div><p class="eyebrow">连接与后台</p><h1 id="runtimeTitle" tabindex="-1">运行状态</h1><p class="description">检查本机连接，验证窗口关闭后的后台运行。</p></div><button class="button" id="reconnectButton">检查连接 <span data-icon="refresh" aria-hidden="true"></span></button></div>
+      <div class="runtime-grid">
+        <article class="card"><div class="section-kicker">桌面环境</div><dl class="detail-list" id="runtimeDetails"></dl></article>
+        <article class="card"><div class="section-kicker">账本连接</div><dl class="detail-list" id="ledgerDetails"></dl><button class="button" id="selectConfig">选择现有账本配置</button><p class="small muted">首次连接选择项目中的 .ledger/config.json。</p></article>
+        <article class="card probe-card"><div class="probe-heading"><div><div class="section-kicker">后台运行验证</div><h2>30 秒本机连接检查</h2></div><span class="tag" id="probeLabel">未开始</span></div><p>每 5 秒检查一次本机账本连接。可以切换页面或关闭窗口，稍后从 Dock 打开查看结果。退出 App 会停止检查。</p><progress id="probeProgress" max="6" value="0" aria-label="后台检查进度"></progress><div class="probe-actions"><span id="probeDetail" role="status">只检查本机连接，不读取交易平台。</span><div><button class="button" id="stopProbe" disabled>停止</button><button class="button primary" id="startProbe">开始检查</button></div></div></article>
+      </div>
+      <article class="card log-card"><div class="log-heading"><h2>本次运行日志</h2><span class="muted small">最近 100 条</span></div><ul id="runtimeLogs" class="log-list" aria-label="运行日志"></ul></article>
+    </section>
+  </main>
+  <dialog id="ledgerAccountsDialog" class="price-dialog ledger-wide-dialog" aria-labelledby="ledgerAccountsTitle">
+    <form id="ledgerAccountsForm"><div class="log-heading"><h2 id="ledgerAccountsTitle">账户归属</h2><button type="button" data-close-ledger="ledgerAccountsDialog" class="text-button">关闭</button></div>
+      <p id="ledgerAccountsHelp" class="small muted">请在工作台选择当前终端关联账户。</p>
+      <label id="ledgerSamePersonControl" class="check-label" for="ledgerSamePerson"><input id="ledgerSamePerson" type="checkbox" checked><span>默认按同一人核算，后续新增数据自动加入</span></label>
+      <div id="ledgerAccountFields"></div><button id="ledgerAccountsSave" class="button primary" type="submit">保存并重新汇总</button><button id="ledgerAccountsGoOverview" class="button" type="button" hidden>前往工作台选择账户</button><p id="ledgerAccountsError" class="form-error" role="alert"></p>
+    </form>
+  </dialog>
+  <dialog id="ledgerSettingsDialog" class="price-dialog" aria-labelledby="ledgerSettingsTitle"><form id="ledgerSettingsForm"><div class="log-heading"><h2 id="ledgerSettingsTitle">估值设置</h2><button type="button" data-close-ledger="ledgerSettingsDialog" class="text-button">关闭</button></div><label for="ledgerDiscount">备用钱包估值折扣（折）<input id="ledgerDiscount" type="number" min="0" max="100" step="0.001" required></label><p class="small muted">默认采用截至所选日期的历史加权提现折扣；没有历史提现样本时使用此备用折扣估值钱包余额与 Steam 持仓。8 折表示 100 元余额估值 80 元，不改写真实成本和已实现收益。</p><div class="price-fields"><label for="ledgerFeeCs2">CS2 BUFF 卖出手续费（%）<input id="ledgerFeeCs2" type="number" min="0" max="100" step="0.01" required></label><label for="ledgerFeeDota">Dota 2 BUFF 卖出手续费（%）<input id="ledgerFeeDota" type="number" min="0" max="100" step="0.01" required></label></div><button type="submit" class="button primary">保存并更新估值</button><p id="ledgerSettingsError" class="form-error" role="alert"></p></form></dialog>
+  <dialog id="ledgerDetailDialog" class="price-dialog ledger-wide-dialog" aria-labelledby="ledgerDetailTitle"><div class="log-heading"><h2 id="ledgerDetailTitle">持仓预期收益</h2><button type="button" data-close-ledger="ledgerDetailDialog" class="text-button">关闭</button></div><div id="ledgerDetailContent"></div><form id="ledgerQuoteForm"><h3>更新本机报价</h3><p class="small muted">每件人民币报价；保留实际观测时间。挂售和求购为预期价格，不保证成交。</p><div class="price-fields"><label for="ledgerQuoteAsk">BUFF 挂售价（元）<input id="ledgerQuoteAsk" inputmode="decimal"></label><label for="ledgerQuoteAskAt">挂售观测时间<input id="ledgerQuoteAskAt" type="datetime-local" step="0.001"></label><label for="ledgerQuoteBid">BUFF 最高不限求购（元）<input id="ledgerQuoteBid" inputmode="decimal"></label><label for="ledgerQuoteBidAt">求购观测时间<input id="ledgerQuoteBidAt" type="datetime-local" step="0.001"></label><label for="ledgerQuoteSteam">Steam 含费售价（元）<input id="ledgerQuoteSteam" inputmode="decimal"></label><label for="ledgerQuoteSteamAt">Steam 观测时间<input id="ledgerQuoteSteamAt" type="datetime-local" step="0.001"></label><label for="ledgerQuoteUu">悠悠预计净到账（元，已扣费）<input id="ledgerQuoteUu" inputmode="decimal"></label><label for="ledgerQuoteUuAt">悠悠观测时间<input id="ledgerQuoteUuAt" type="datetime-local" step="0.001"></label></div><button type="submit" class="button primary">保存报价并比较</button><p id="ledgerQuoteError" class="form-error" role="alert"></p></form></dialog>
+  <dialog id="historyMappingDialog" class="price-dialog history-mapping-dialog" aria-labelledby="historyMappingTitle">
+    <form id="historyMappingForm" action="#" method="post"><div class="log-heading"><h2 id="historyMappingTitle">设置 CSV 列对应</h2><button id="historyMappingClose" type="button" class="text-button">取消导入</button></div>
+      <p class="small muted">请核对列名、金额含义和来源。预览为第一笔记录；没有来源列时默认为 Steam。通用格式仍可按原平台保存，CSV 归档页只展示 Steam 记录。</p>
+      <p id="historyMappingFile" class="history-original-name"></p>
+      <div class="history-mapping-fields">
+        <label for="historyMapDate">成交日期列（必选）<select id="historyMapDate" required data-history-column="date"></select><small data-history-sample="date"></small></label>
+        <label for="historyMapName">物品名称列（必选）<select id="historyMapName" required data-history-column="name"></select><small data-history-sample="name"></small></label>
+        <label for="historyMapPrice">金额列（必选）<select id="historyMapPrice" required data-history-column="price"></select><small data-history-sample="price"></small></label>
+        <label for="historyMapUnit">金额单位<select id="historyMapUnit"><option value="major">元（12.34 表示 12.34 元）</option><option value="cents">分（1234 表示 12.34 元）</option></select></label>
+        <label for="historyMapPriceMode">金额含义<select id="historyMapPriceMode"><option value="unit">单件价格 × 数量</option><option value="total">该行总金额（已含数量）</option></select></label>
+        <label for="historyMapQuantity">数量列（可选，默认 1）<select id="historyMapQuantity" data-history-column="quantity"></select><small data-history-sample="quantity"></small></label>
+        <label for="historyMapMarketName">完整市场名列（可选，用于合并）<select id="historyMapMarketName" data-history-column="marketName"></select><small data-history-sample="marketName"></small></label>
+        <label for="historyMapGame">游戏 / App ID 列（可选）<select id="historyMapGame" data-history-column="game"></select><small data-history-sample="game"></small></label>
+        <label for="historyMapPlatform">来源平台列（可选）<select id="historyMapPlatform" data-history-column="platform"></select><small data-history-sample="platform"></small></label>
+        <label for="historyMapType">买卖类型列（可选）<select id="historyMapType" data-history-column="type"></select><small data-history-sample="type"></small></label>
+        <label for="historyMapCurrency">币种列（可选）<select id="historyMapCurrency" data-history-column="currency"></select><small data-history-sample="currency"></small></label>
+        <label for="historyMapOrderId">订单号列（建议提供）<select id="historyMapOrderId" data-history-column="orderId"></select><small data-history-sample="orderId"></small></label><label for="historyMapAssetId">资产 ID 列（可选）<select id="historyMapAssetId" data-history-column="assetId"></select><small data-history-sample="assetId"></small></label>
+      </div>
+      <div class="history-mapping-defaults"><strong>未指定列时，统一使用</strong><div class="history-mapping-fields">
+        <label for="historyMapDefaultPlatform">来源平台<select id="historyMapDefaultPlatform"><option value="steam" selected>Steam</option><option value="buff">BUFF</option><option value="other">其他</option></select></label>
+        <label for="historyMapDefaultGame">游戏<select id="historyMapDefaultGame"><option value="730">CS2</option><option value="570">Dota 2</option><option value="other" selected>其他游戏</option></select></label>
+        <label for="historyMapDefaultType">交易类型<select id="historyMapDefaultType"><option value="purchase">购买</option><option value="sale">出售</option></select></label>
+        <label for="historyMapDefaultCurrency">币种<select id="historyMapDefaultCurrency"><option value="CNY">CNY · 人民币</option><option value="USD">USD · 美元</option><option value="EUR">EUR · 欧元</option><option value="GBP">GBP · 英镑</option></select></label>
+      </div></div>
+      <p class="small muted">日期使用 YYYY-MM-DD 或 YYYY/MM/DD，可带时分秒。类型支持购买 / 出售、buy / sell、purchase / sale。金额沿用清单值，不额外计算手续费；不同币种分别汇总。</p>
+      <p id="historyMappingError" class="form-error" role="alert" tabindex="-1" hidden></p><div class="form-actions"><button type="submit" class="button primary">校验并导入</button></div>
+    </form>
+  </dialog>
+  <dialog id="historyNameDialog" class="price-dialog" aria-labelledby="historyNameTitle"><form id="historyNameForm" action="#" method="post"><div class="log-heading"><h2 id="historyNameTitle">核对中文名称</h2><button id="historyNameClose" type="button" class="text-button">关闭</button></div><p class="small muted">请填写已核实的完整中文名称，并保留铭刻、纯正等品质前缀。保存仅改变显示名称，合并仍使用原始市场名。</p><p id="historyNameEnglish" class="history-original-name"></p><label for="historyChineseName">中文名称<input id="historyChineseName" name="chineseName" maxlength="300" required></label><p id="historyNameError" class="form-error" role="alert" hidden></p><div class="form-actions"><button class="button primary" type="submit">保存核对结果</button></div></form></dialog>
+  <dialog id="historyNamesDialog" class="price-dialog history-mapping-dialog" aria-labelledby="historyNamesTitle">
+    <div class="log-heading"><h2 id="historyNamesTitle">中英文名称映射</h2><button id="historyNamesClose" class="text-button" type="button">关闭</button></div>
+    <p class="small muted">按游戏和完整英文市场名精确匹配，保留品质、磨损、铭刻等前缀。BUFF / CSV 新增对照会自动入库；出现多个中文名时需核对，手动名称不会被同步覆盖。</p>
+    <label for="historyNamesSearch">查找名称或冲突<input id="historyNamesSearch" type="search" placeholder="英文、中文、冲突"></label><p id="historyNamesCount" class="small muted"></p>
+    <div class="quote-table-wrap"><table class="quote-table"><caption class="visually-hidden">已入库的名称映射配置</caption><thead><tr><th scope="col">游戏 / 完整英文名</th><th scope="col">中文名 / 来源</th><th scope="col">核对</th></tr></thead><tbody id="historyNamesRows"></tbody></table></div>
+    <form id="historyNamesForm" action="#" method="post"><h3>新增或修改精确映射</h3><div class="history-mapping-fields"><label for="historyNamesGame">游戏 App ID<input id="historyNamesGame" value="730" inputmode="numeric" pattern="[0-9]+" required></label><label for="historyNamesEnglish">完整英文市场名<input id="historyNamesEnglish" maxlength="500" required></label><label for="historyNamesChinese">完整中文名<input id="historyNamesChinese" maxlength="300" required></label></div><button type="submit" class="button primary">保存手动映射</button><p id="historyNamesStatus" role="status"></p></form>
+  </dialog>
+  <dialog id="reportEntryDialog" class="price-dialog" aria-labelledby="reportEntryTitle">
+    <form id="reportEntryForm" action="#" method="post"><div class="log-heading"><h2 id="reportEntryTitle">核对买卖价格</h2><button id="reportEntryClose" type="button" class="text-button">关闭</button></div>
+      <p id="reportEntryItem" class="history-original-name"></p><p id="reportEntryHint" class="small muted"></p>
+      <div class="price-fields"><label for="reportEntryPlatform">成交平台<select id="reportEntryPlatform"><option value="buff">BUFF</option><option value="uu">悠悠</option><option value="steam">Steam</option></select></label>
+        <label for="reportEntryDate">实际成交日期<input id="reportEntryDate" type="date" required></label>
+        <label for="reportEntryQuantity">核对数量<input id="reportEntryQuantity" type="number" min="1" step="1" required></label>
+        <label for="reportEntryPrice"><span id="reportEntryPriceLabel">单件实付价格</span><input id="reportEntryPrice" inputmode="decimal" pattern="[0-9]+(\.[0-9]{1,2})?" required aria-describedby="reportEntryTotal"></label>
+      </div><p id="reportEntryTotal" class="small muted">请填写实际成交均价，最多两位小数。</p>
+      <label for="reportEntryNote">核对说明<input id="reportEntryNote" maxlength="500" placeholder="例如：补充之前未导入的购买记录"></label>
+      <p class="small muted">只补充收益报告。卖出价格须为扣费后净到账，买入价格须为含费实付。尚未成交的报价不计已实现收益。</p>
+      <p id="reportEntryError" class="form-error" role="alert" tabindex="-1" hidden></p><div class="form-actions"><button id="reportEntrySave" class="button primary" type="submit">保存并计入报告</button></div>
+    </form>
+  </dialog>
+  <script src="brand-ui.js"></script><script src="/common.js"></script><script src="pricing.js"></script><script src="price-state.js"></script><script src="report-analytics.js"></script><script src="report-charts.js"></script><script src="order-ledger-ui.js"></script><script src="profit-report-ui.js"></script><script src="dota2-names.js"></script><script src="market-history.js"></script><script src="market-history-ui.js"></script><script src="buff-orders-ui.js"></script><script src="uu-orders-ui.js"></script><script src="steam-orders-ui.js"></script><script src="alchemy-ui.js"></script><script src="account-cloud-ui.js"></script><script src="app.js"></script>
+</body>
+</html>

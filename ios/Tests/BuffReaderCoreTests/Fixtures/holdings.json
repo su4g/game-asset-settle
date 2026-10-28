@@ -1,0 +1,24 @@
+{
+  "ok": true,
+  "result": {
+    "rows": [
+      {
+        "id": "category:e03e51594e098fba894aeb657cb10543fd287c534ee98dcff165b9a8f91028e4",
+        "name": "同名物品",
+        "marketHashName": "Same Item",
+        "appid": 730,
+        "currencyCode": "CNY",
+        "quantity": 1,
+        "cashQuantity": 1,
+        "cashCostCents": 100,
+        "steamQuantity": 0,
+        "steamFaceCents": 0,
+        "excluded": false
+      }
+    ],
+    "total": 1,
+    "page": 1,
+    "pageSize": 50,
+    "currency": "CNY"
+  }
+}

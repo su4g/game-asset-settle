@@ -1,0 +1,54 @@
+"use strict";
+const test = require("node:test"), assert = require("node:assert/strict"), { once } = require("node:events");
+const { alchemyFixture } = require("./cloud-fixture.cjs");
+const { validateEnvelope, validateReplacement } = require("../cloud/validation.cjs");
+const { view } = require("../cloud/views.cjs");
+const { buildAlchemy } = require("../desktop/alchemy.cjs");
+const { reconcileInput } = require("../desktop/steam-reconcile.cjs");
+const { createServer } = require("../cloud/index.cjs");
+const rowFor = p => ({ id: p.id, name: p.name, snapshot: p, sequence: 2, hash: "a".repeat(64), uploadedAt: "2026-10-28T00:00:00.000Z" });
+test("手机炼金与桌面计算一致，绑定空订单 Steam 账号也保留事件且响应只含展示字段", () => {
+  const p = validateEnvelope(alchemyFixture()).profile, row = rowFor(p), mobile = view(row, "alchemy"), desktop = buildAlchemy(reconcileInput(p.input), p.options);
+  assert.deepEqual(mobile.summary, desktop.summary); assert.equal(mobile.rows[0].cost.cash, 1000); assert.equal(mobile.rows[0].cashProfitCents, 500);
+  assert.equal(mobile.profileId, p.id); assert.equal(mobile.rows[0].inputs[0].sources.length, 1);
+  assert.equal(mobile.archives[0].complete, true); assert.equal(mobile.rows[0].output.assetId, undefined); assert.equal(mobile.archives[0].cursor, undefined);
+  const b = validateEnvelope(alchemyFixture("account-2", "two", 2000)).profile;
+  assert.equal(view(rowFor(b), "alchemy").rows[0].cashProfitCents, -500);
+});
+test("炼金日期筛选按合成日，分页不改变汇总，未知金额与未出售不虚构利润", () => {
+  const p = validateEnvelope(alchemyFixture()).profile, row = rowFor(p), account = p.input.steam.accounts[p.bindings.steam];
+  assert.equal(view(row, "alchemy", new URLSearchParams("from=2026-10-27&to=2026-10-27&q=Input")).total, 1);
+  assert.equal(view(row, "alchemy", new URLSearchParams("from=2026-10-28")).total, 0);
+  for (const q of ["limit=30", "currency=CNY", "direction=sell", "page=1&page=2", "from=2026-10-28&to=2026-10-27"]) assert.throws(() => view(row, "alchemy", new URLSearchParams(q)));
+  p.input.buff.accounts[p.bindings.buff].records[0].paidTotalCents = null;
+  assert.equal(view(row, "alchemy").rows[0].cashProfitCents, null);
+  p.input.buff.accounts[p.bindings.buff].records.pop();
+  assert.equal(view(row, "alchemy").rows[0].sale, null);
+  const e = account.inventoryHistory.events[0];
+  account.inventoryHistory.events = Array.from({length: 21}, (_,n) => {const eventId = n.toString(16).padStart(40, "0"); return {...structuredClone(e),eventId,key:`${e.accountId}:inventory:${eventId}`};});
+  account.inventoryHistory.coverage.eventCount = 21;
+  const first = view(row, "alchemy"), next = view(row, "alchemy", new URLSearchParams("page=2&limit=20"));
+  assert.equal(first.rows.length, 20); assert.equal(next.rows.length, 1); assert.equal(next.total, 21); assert.deepEqual(first.summary, next.summary);
+  assert(!first.rows.some(r => r.id === next.rows[0].id));
+});
+test("库存历史跨组、删除与事件身份冲突不能覆盖云档案", () => {
+  const envelope = alchemyFixture(), p = validateEnvelope(envelope).profile, id = p.bindings.steam;
+  const bad = structuredClone(envelope); bad.profiles[0].input.steam.accounts[id].inventoryHistory.events[0].accountId = "steam:76561198000000002";
+  assert.throws(() => validateEnvelope(bad), /库存历史/);
+  const removed = structuredClone(p); delete removed.input.steam.accounts[id].inventoryHistory;
+  assert.throws(() => validateReplacement(p, removed), /缺少已归档库存历史/);
+  const conflict = structuredClone(p); conflict.input.steam.accounts[id].inventoryHistory.events[0].items[0].marketHashName = "Other Output";
+  assert.throws(() => validateReplacement(p, conflict), /事件身份冲突/);
+  const empty = view({id: "account-2", name: "账户二", snapshot: null}, "alchemy");
+  assert.equal(empty.total, 0); assert.deepEqual(empty.summary.currencies, []); assert.deepEqual(empty.archives, []);
+});
+test("手机炼金端点仅接受现有只读凭据，响应绑定账户且保留负收益", async t => {
+  const row = rowFor(validateEnvelope(alchemyFixture("account-2", "two", 2000)).profile);
+  const server = createServer({store: {get: async () => row},readToken: "test-read",ingestTokens:{"account-2":"test-write"}});
+  server.listen(0,"127.0.0.1"); await once(server,"listening"); t.after(()=>{server.closeAllConnections();server.close();});
+  const url = `http://127.0.0.1:${server.address().port}/v1/profiles/account-2/alchemy`;
+  assert.equal((await fetch(url)).status,401); assert.equal((await fetch(url,{headers:{Authorization:"Bearer test-write"}})).status,401);
+  const response = await fetch(url,{headers:{Authorization:"Bearer test-read"}}), body = await response.json();
+  assert.equal(response.status,200); assert.equal(body.result.profileId,"account-2"); assert.equal(body.result.rows[0].cashProfitCents,-500);
+  assert.equal((await fetch(url,{method:"POST",headers:{Authorization:"Bearer test-read"}})).status,405);
+});

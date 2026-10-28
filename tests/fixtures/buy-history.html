@@ -1,0 +1,9 @@
+<!doctype html><html lang="zh-CN"><meta charset="utf-8"><title>买入同步 · 隔离 DOM 验收</title>
+<h1>模拟 BUFF 购买历史</h1><p>全部为模拟订单，不连接平台、不使用真实资金。</p><pre id="testResults">等待测试…</pre>
+<table id="history"><thead><tr><th>商品</th><th>订单号</th><th>数量</th><th>实付金额</th><th>购买时间</th><th>收货时间</th><th>状态</th></tr></thead><tbody>
+<tr data-market-hash-name="Demo Item (Field-Tested)"><td><a href="/goods/921475">[演示] 饰品（久经沙场）</a></td><td>demo-buy-001</td><td>2</td><td>￥1.98</td><td>2025-01-02 10:03:04</td><td></td><td>待发货</td></tr>
+<tr><td><a href="/goods/123456">[演示] 饰品（崭新出厂）</a><a href="https://steamcommunity.com/market/listings/730/Demo%20Item%20%28Factory%20New%29">Steam</a></td><td>demo-buy-002</td><td></td><td>US$0.12</td><td>2025-01-03 10:03:04</td><td>2025-01-04 10:03:04</td><td>交易完成</td></tr>
+<tr data-market-hash-name="Demo Cancelled Item"><td><a href="/goods/999999">[演示] 已取消饰品</a></td><td>demo-buy-cancelled</td><td>1</td><td>￥0.88</td><td>2025-01-03 10:03:04</td><td></td><td>已取消</td></tr>
+<tr data-market-hash-name="Demo Recoil Case"><td><a href="/goods/1">[演示] 已入账反冲武器箱</a></td><td>demo-existing-order</td><td>10</td><td>￥800.00</td><td>2025-01-01 10:03:04</td><td></td><td>交易完成</td></tr>
+</tbody></table>
+<script src="/buy-history.js"></script><script src="/tests/fixtures/buy-history.js"></script></html>

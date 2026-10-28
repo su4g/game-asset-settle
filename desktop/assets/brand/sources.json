@@ -1,0 +1,21 @@
+{
+  "productName": "饰品交易账本",
+  "concept": "CS AWP 永恒之枪 × Dota 2 破碎大剑，交叉 X 与银蓝玻璃展示底座",
+  "generator": "内置 imagegen",
+  "references": [
+    {
+      "item": "AWP | Gungnir",
+      "source": "https://steamcommunity.com/market/listings/730/AWP%20%7C%20Gungnir%20%28Factory%20New%29?l=english"
+    },
+    {
+      "item": "Shattered Greatsword / 破碎大剑",
+      "source": "https://steamcommunity.com/market/listings/570/Shattered%20Greatsword?l=english"
+    }
+  ],
+  "generationNotes": "先依官方饰品外观生成透明品牌标记，再基于标记生成不透明浅冰蓝应用图标。枪口左上、剑尖右上，下方为双层底座，无文字。应用图标使用 sips 输出 1024px；macOS iconutil 导出 16px–1024px ICNS。",
+  "files": {
+    "trayTemplate.png": "80e6677582401a25d2ca531df7f49ef99ec43410bee574c9482d869a03634510",
+    "app-icon.png": "8df62c3876dd8ab985851ab20ee2eb46353ad774e43dc1973815f7e4f981931c",
+    "mark.png": "3ccb6c30c7215eb9458649b7f2e261eec991d5ec4897eb673e904927c350deec"
+  }
+}
