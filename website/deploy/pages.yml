@@ -32,7 +32,7 @@ jobs:
       - name: 生成静态页面（无依赖安装，无应用打包）
         run: node website/build.mjs
         env:
-          SITE_URL: ${{ steps.pages.outputs.base_url }}/
+          SITE_URL: https://${{ steps.pages.outputs.host }}${{ steps.pages.outputs.base_path }}/
       - uses: actions/upload-pages-artifact@v4
         with:
           path: website/dist

@@ -27,6 +27,41 @@
       "retrievedAt": "2026-10-28",
       "processing": "官网 favicon，使用 sips 无损提取 64px PNG",
       "sha256": "5265c5ec2f3c3e493110a5db0466d301d8e690a3a29571feb9a00dadba78eb55"
+    },
+    {
+      "file": "macos-report.webp",
+      "source": "饰品交易账本实际运行窗口",
+      "capturedAt": "2026-10-28",
+      "processing": "原始窗口截图，无损 WebP 编码；财务金额经所有者授权公开，画面仅显示通用账户名称",
+      "sha256": "6bebcf4048d67531bb0625672e8063a4e71b0620217398987c61ab982fd6d1ad"
+    },
+    {
+      "file": "macos-trends.webp",
+      "source": "饰品交易账本实际运行窗口",
+      "capturedAt": "2026-10-28",
+      "processing": "原始窗口截图，无损 WebP 编码；财务金额经所有者授权公开，画面仅显示通用账户名称",
+      "sha256": "8f057482e710c264259012b5a284456a19972646dffda1d5f060b9348b56a34e"
+    },
+    {
+      "file": "ios-overview.webp",
+      "source": "iPhone 镜像中的真实 iPhone 应用界面",
+      "capturedAt": "2026-10-28",
+      "processing": "原始窗口截图，无损 WebP 编码；财务金额经所有者授权公开，画面仅显示通用账户名称",
+      "sha256": "c7ec0db1835f8c677c58bee05f4420a9b12bbb3025e63eb6d56c6717a427158c"
+    },
+    {
+      "file": "ios-holdings.webp",
+      "source": "iPhone 镜像中的真实 iPhone 应用界面",
+      "capturedAt": "2026-10-28",
+      "processing": "原始窗口截图，无损 WebP 编码；财务金额经所有者授权公开，画面仅显示通用账户名称",
+      "sha256": "0fd8703405b66a5a3c6a57c113ed1e52caa5b8cf73eda381a67db0a23ce7389c"
+    },
+    {
+      "file": "ios-report.webp",
+      "source": "iPhone 镜像中的真实 iPhone 应用界面",
+      "capturedAt": "2026-10-28",
+      "processing": "原始窗口截图，无损 WebP 编码；财务金额经所有者授权公开，画面仅显示通用账户名称",
+      "sha256": "fae0a1cc6d6a9473a9e7648b14b2005482d23b1b2349e5ff6f1cdd0baba7bac7"
     }
   ]
 }

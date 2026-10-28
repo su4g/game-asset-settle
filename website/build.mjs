@@ -13,7 +13,7 @@ await rm(destination, { recursive: true, force: true });
 await mkdir(path.join(destination, "site-assets"), { recursive: true });
 // Explicit public-file allowlist. Never package the application, local account data or credentials.
 const publicFiles = ["index.html", "robots.txt", "sitemap.xml"];
-const assets = ["styles.css", "app.js", "app-icon.png", "buff.png", "uu.png", "steam.png"];
+const assets = ["styles.css", "app.js", "app-icon.png", "buff.png", "uu.png", "steam.png", "macos-report.webp", "macos-trends.webp", "ios-overview.webp", "ios-holdings.webp", "ios-report.webp"];
 for (const name of publicFiles) await cp(path.join(root, "src", name), path.join(destination, name));
 for (const name of assets) await cp(path.join(root, "src/assets", name), path.join(destination, "site-assets", name));
 let html = await readFile(path.join(destination, "index.html"), "utf8");
